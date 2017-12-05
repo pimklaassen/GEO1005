@@ -1,8 +1,8 @@
 import urllib as url
 from lxml import etree
-import gzip, datetime, time
+import gzip, datetime, time, pprint, progressbar
 
-# print datetime.datetime.today().strftime('%d-%m-%Y %H:%M:%S')
+rotterdam = True
 
 def check_location(string):
 	if string[6:11] == 'NLRTM':
@@ -31,7 +31,6 @@ def get_bridge_info():
 		return
 
 	for node in nodes:
-
 		check = None
 		bridge_id = None
 		timestamp = None
@@ -42,7 +41,7 @@ def get_bridge_info():
 			check = node.attrib['id']
 		except:
 			continue
-		if check_location(check):
+		if not check_location(check) == rotterdam:
 			continue
 		bridge_id = check
 
@@ -67,35 +66,13 @@ def get_bridge_info():
 							 'latitude': bridge_la,
 							 'longitude': bridge_lo})
 
-		return open_bridges
+	return open_bridges
 
-def run(mins):
-	pass
-	start = datetime.datetime.now()
-
-	now_open = []
-	locations = []
-	locations_dict = []
-
-	while start + datetime.timedelta(minutes=mins) > datetime.datetime.now():
-		check_open = get_bridge_info()
-		if check_open == None:
-			time.sleep(60)
-			continue
-		for bridge in check_open:
-			if not bridge['id'] in now_open:
-				now_open.append(bridge['id'])
-			else:
-				now_open.remove(bridge['id'])
-
-			if not bridge['id'] in locations:
-				locations_dict.append({'id': bridge['id'],
-								  	   'lat': bridge['latitude'],
-								  	   'lon': bridge['longitude']})
-				locations.append(bridge['id'])
-		print 'now open:'
-		for br in now_open:
-			print br
-		time.sleep(60)
-
-run(10)
+now = get_bridge_info()
+if not now:
+	print 'no bridges open'
+else:
+	print '{} bridge(s) open:'.format(len(now))
+for bridge in now:
+	print '-' * 52
+	pprint.pprint(bridge)
