@@ -2,7 +2,7 @@ import urllib as url
 from lxml import etree
 import gzip, datetime, time, pprint, progressbar
 
-rotterdam = True
+rotterdam = False
 
 def check_location(string):
 	if string[6:11] == 'NLRTM':
@@ -68,11 +68,33 @@ def get_bridge_info():
 
 	return open_bridges
 
-now = get_bridge_info()
-if not now:
-	print 'no bridges open'
-else:
-	print '{} bridge(s) open:'.format(len(now))
-for bridge in now:
-	print '-' * 52
-	pprint.pprint(bridge)
+for i in xrange(1):
+	now = get_bridge_info()
+	if not now:
+		print 'no bridges open'
+	else:
+		output = open('output_qgis.csv', 'r')
+		content = output.readlines()
+		output.close()
+
+		new_content = []
+		print content
+		if content:
+			id_names = [l.split(';')[0] for l in content]
+			for bridge in now:
+				if bridge['id'] not in id_names:
+					new_content.append('{};{};{};{}\n'.format(bridge['id'],
+														      'True',
+														      bridge['latitude'],
+														      bridge['longitude']))
+				else:
+					
+		else:
+			new_content.append('NULL;NULL;NULL;NULL')
+
+		output = open('output_qgis.csv', 'w')
+		for line in new_content:
+			output.write('{}'.format(line))
+		output.close()
+
+	# time.sleep(1)
