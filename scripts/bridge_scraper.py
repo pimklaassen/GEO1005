@@ -1,8 +1,8 @@
 import urllib as url
 from lxml import etree
-import gzip, datetime, time, pprint, progressbar
+import gzip, datetime, time, json
 
-rotterdam = False
+rotterdam = True
 
 def check_location(string):
 	if string[6:11] == 'NLRTM':
@@ -68,33 +68,26 @@ def get_bridge_info():
 
 	return open_bridges
 
-for i in xrange(1):
-	now = get_bridge_info()
-	if not now:
-		print 'no bridges open'
-	else:
-		output = open('output_qgis.csv', 'r')
-		content = output.readlines()
-		output.close()
 
-		new_content = []
-		print content
-		if content:
-			id_names = [l.split(';')[0] for l in content]
-			for bridge in now:
-				if bridge['id'] not in id_names:
-					new_content.append('{};{};{};{}\n'.format(bridge['id'],
-														      'True',
-														      bridge['latitude'],
-														      bridge['longitude']))
-				else:
-					
+def record(mints):
+	time_string = datetime.datetime.today().strftime('%d-%m')
+	filename = time_string + ' recording {} minutes.txt'.format(str(mints))
+	output = open(filename, 'w')
+
+	start = datetime.datetime.now()
+	end = start + datetime.timedelta(minutes=mints)
+
+	while datetime.datetime.now() < end:
+		open_bridges = get_bridge_info()
+
+		if open_bridges:
+			for open_bridge in open_bridges:
+				json_string = json.dumps(open_bridge)
+				print json_string
+				output.write(json_string + '\n')
 		else:
-			new_content.append('NULL;NULL;NULL;NULL')
+			print 'no open bridges in rotterdam'
+		time.sleep(60)
+	output.close()
 
-		output = open('output_qgis.csv', 'w')
-		for line in new_content:
-			output.write('{}'.format(line))
-		output.close()
-
-	# time.sleep(1)
+record(60)
