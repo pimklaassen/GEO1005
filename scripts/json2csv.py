@@ -1,6 +1,6 @@
 import json
 
-def josn2csv(filename_in, filename_out):
+def json2csv(filename_in, filename_out):
 	raw_json = open(filename_in, 'r')
 	json_lines = raw_json.readlines()
 	raw_json.close()
@@ -16,5 +16,3 @@ def josn2csv(filename_in, filename_out):
 											  d['open']))
 
 	out_file.close()
-
-josn2csv('06-12 recording 60 minutes.txt', '06-12 recording.csv')

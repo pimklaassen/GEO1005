@@ -1,6 +1,6 @@
 import urllib as url
 from lxml import etree
-import gzip, datetime, time, json
+import gzip, datetime, time, json, json2csv, sys
 
 rotterdam = True
 
@@ -70,7 +70,7 @@ def get_bridge_info():
 
 
 def record(mints):
-	time_string = datetime.datetime.today().strftime('%d-%m')
+	time_string = datetime.datetime.today().strftime('%d-%m-%H-%M')
 	filename = time_string + ' recording {} minutes.txt'.format(str(mints))
 	output = open(filename, 'w')
 
@@ -88,6 +88,11 @@ def record(mints):
 		else:
 			print 'no open bridges in rotterdam'
 		time.sleep(60)
+	n = output.name
 	output.close()
+	json2csv.json2csv(n, '_csv_{}.csv'.format(time_string))
+	
 
-record(60)
+if __name__ == "__main__":
+	t = int(sys.argv[1])
+	record(t)
