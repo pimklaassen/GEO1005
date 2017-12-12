@@ -1,3 +1,9 @@
+import socket
+import sys
+import json
+import string
+
+#create a TCP/Ip socket
 server_address = '83.220.137.136'
 server_port = 47910 # server of vesseltracker
 buffer_size = 1024
