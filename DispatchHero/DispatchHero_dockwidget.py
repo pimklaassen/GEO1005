@@ -44,7 +44,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
+    # iface needs to be set up. Make sure this works globally
+
+    # here we will be mapping our signals
+
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
 
+    # here we will be putting functionality on the signals. We can do this by using modules.
