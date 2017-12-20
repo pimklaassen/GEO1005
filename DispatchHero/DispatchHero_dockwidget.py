@@ -23,8 +23,9 @@
 
 import os
 
-from PyQt4 import QtGui, uic
+from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSignal
+import DispatchHero_visualisation as visual
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'DispatchHero_dockwidget_base.ui'))
@@ -33,8 +34,10 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
+    #custom signals
+    updateAttribute = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent=None):
+    def __init__(self, iface, parent=None):
         """Constructor."""
         super(DispatchHeroDockWidget, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -50,19 +53,17 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # set up GUI operation signals
         # GUI button connections
-        self.autoOn.clicked.connect(self.autoOn)
-        self.autoOff.clicked.connect(self.autoOff)
-        self.previous.clicked.connect(self.previous)
-        self.next.clicked.connect(self.next)
-        self.addButton.clicked.connect(self.addButton)
-        self.zoomIn.clicked.connect(self.zoomIn)
-        self.zoomOut.clicked.connect(self.zoomOut)
+        self.autoOnButton.clicked.connect(self.autoOn)
+        self.autoOffButton.clicked.connect(self.autoOff)
+        self.previousButton.clicked.connect(self.previous)
+        self.nextButton.clicked.connect(self.next)
+        self.addButton.clicked.connect(self.add)
+        self.zoomInButton.clicked.connect(self.zoomIn)
+        self.zoomOutButton.clicked.connect(self.zoomOut)
         
         # visualisation connections
-        self.displayMap.connect(self.displayMap)
 
         # initialisation
-        self.updateLayers()
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
@@ -72,7 +73,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         pass
 
     def autoOff(self):
-        pass
+        visual.testing()
 
     def previous(self):
         pass
@@ -80,7 +81,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def next(self):
         pass
 
-    def addButton(self):
+    def add(self):
         pass
 
     def zoomIn(self):
@@ -99,4 +100,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         pass
 
     def setDestination(self):
+        pass
+
+    def displayMap(self):
         pass
