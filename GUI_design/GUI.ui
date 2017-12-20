@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QFrame" name="displayMap">
+  <widget class="QFrame" name="display">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -76,7 +76,7 @@
      <pixmap>:/Dispatch/Mapa.jpg</pixmap>
     </property>
    </widget>
-   <widget class="QToolButton" name="zoomIn">
+   <widget class="QToolButton" name="zoomInButton">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -96,7 +96,7 @@
      <string>+</string>
     </property>
    </widget>
-   <widget class="QToolButton" name="zoomOut">
+   <widget class="QToolButton" name="zoomOutButton">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -117,7 +117,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QPushButton" name="autoOn">
+  <widget class="QPushButton" name="autoOnButton">
    <property name="geometry">
     <rect>
      <x>580</x>
@@ -130,7 +130,7 @@
     <string>Auto ON</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="autoOff">
+  <widget class="QPushButton" name="autoOffButton">
    <property name="geometry">
     <rect>
      <x>670</x>
@@ -143,7 +143,7 @@
     <string>Auto OFF</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="previous">
+  <widget class="QPushButton" name="previousButton">
    <property name="geometry">
     <rect>
      <x>790</x>
@@ -156,7 +156,7 @@
     <string>Previous</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="next">
+  <widget class="QPushButton" name="nextButton">
    <property name="geometry">
     <rect>
      <x>950</x>
