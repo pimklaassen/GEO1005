@@ -44,12 +44,59 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
-    # iface needs to be set up. Make sure this works globally
+        #setup global variables
+        self.iface = iface
+        self.canvas = self.iface.mapCanvas()
 
-    # here we will be mapping our signals
+        # set up GUI operation signals
+        # GUI button connections
+        self.autoOn.clicked.connect(self.autoOn)
+        self.autoOff.clicked.connect(self.autoOff)
+        self.previous.clicked.connect(self.previous)
+        self.next.clicked.connect(self.next)
+        self.addButton.clicked.connect(self.addButton)
+        self.zoomIn.clicked.connect(self.zoomIn)
+        self.zoomOut.clicked.connect(self.zoomOut)
+        
+        # visualisation connections
+        self.displayMap.connect(self.displayMap)
+
+        # initialisation
+        self.updateLayers()
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
 
-    # here we will be putting functionality on the signals. We can do this by using modules.
+    def autoOn(self):
+        pass
+
+    def autoOff(self):
+        pass
+
+    def previous(self):
+        pass
+
+    def next(self):
+        pass
+
+    def addButton(self):
+        pass
+
+    def zoomIn(self):
+        pass
+
+    def zoomOut(self):
+        pass
+
+    def cancelSelection(self):
+        pass
+
+    def drawPolygon(self):
+        pass
+
+    def dispatch(self):
+        pass
+
+    def setDestination(self):
+        pass
