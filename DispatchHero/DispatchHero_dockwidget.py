@@ -25,6 +25,7 @@ import os
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal
+import test_function as test
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'DispatchHero_dockwidget_base.ui'))
@@ -44,12 +45,47 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
-    # iface needs to be set up. Make sure this works globally
+        #setup global variables
+        self.iface = iface
+        self.canvas = self.iface.mapCanvas()
 
-    # here we will be mapping our signals
+        # set up GUI operation signals
+        # data
+
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
 
-    # here we will be putting functionality on the signals. We can do this by using modules.
+    def autoOn(self):
+        pass
+
+    def autoOff(self):
+        pass
+
+    def previous(self):
+        pass
+
+    def next(self):
+        pass
+
+    def addButton(self):
+        pass
+
+    def zoomIn(self):
+        test.testfunction()
+
+    def zoomOut(self):
+        pass
+
+    def cancelSelection(self):
+        pass
+
+    def drawPolygon(self):
+        pass
+
+    def dispatch(self):
+        pass
+
+    def setDestination(self):
+        pass
