@@ -27,8 +27,10 @@ from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSignal
 import DispatchHero_visualisation as visual
 
+from . import utility_functions as uf
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'DispatchHero_dockwidget_base.ui'))
+    os.path.dirname(__file__), 'spatial_decision_dockwidget_base_extra.ui'))
 
 
 class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
@@ -53,15 +55,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # set up GUI operation signals
         # GUI button connections
-        self.autoOnButton.clicked.connect(self.autoOn)
-        self.autoOffButton.clicked.connect(self.autoOff)
-        self.previousButton.clicked.connect(self.previous)
-        self.nextButton.clicked.connect(self.next)
-        self.addButton.clicked.connect(self.add)
-        self.zoomInButton.clicked.connect(self.zoomIn)
-        self.zoomOutButton.clicked.connect(self.zoomOut)
-        
-        # visualisation connections
+        self.importDataButton.clicked.connect(self.importData)
 
         # initialisation
 
@@ -69,38 +63,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.closingPlugin.emit()
         event.accept()
 
-    def autoOn(self):
-        pass
-
-    def autoOff(self):
-        visual.testing()
-
-    def previous(self):
-        pass
-
-    def next(self):
-        pass
-
-    def add(self):
-        pass
-
-    def zoomIn(self):
-        pass
-
-    def zoomOut(self):
-        pass
-
-    def cancelSelection(self):
-        pass
-
-    def drawPolygon(self):
-        pass
-
-    def dispatch(self):
-        pass
-
-    def setDestination(self):
-        pass
-
-    def displayMap(self):
-        pass
+    def importData(self, filename=''):
+        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+        if new_file:
+            self.iface.addProject(unicode(new_file))
+        

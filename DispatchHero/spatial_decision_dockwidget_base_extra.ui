@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SpatialDecisionDockWidgetBase</class>
+ <widget class="QDockWidget" name="SpatialDecisionDockWidgetBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>850</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>400</width>
+    <height>850</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>SDSS Template</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <widget class="QTabWidget" name="sampleWidgets">
+    <property name="geometry">
+     <rect>
+      <x>12</x>
+      <y>6</y>
+      <width>373</width>
+      <height>800</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>800</height>
+     </size>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="dataTab">
+     <attribute name="title">
+      <string>data</string>
+     </attribute>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="trucks">
+        <property name="text">
+         <string>Active trucks</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListWidget" name="trucksList"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="bridges">
+        <property name="text">
+         <string>Open bridges</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListWidget" name="bridgesList"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="importDataButton">
+        <property name="text">
+         <string>Import map</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
