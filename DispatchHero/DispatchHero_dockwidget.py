@@ -26,6 +26,7 @@ import os
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSignal
 import DispatchHero_visualisation as visual
+import DispatchHero_calculations as calc
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'DispatchHero_dockwidget_base.ui'))
@@ -79,7 +80,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         pass
 
     def next(self):
-        pass
+        calc.shortestpath(self.canvas)
 
     def add(self):
         pass
