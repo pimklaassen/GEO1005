@@ -76,6 +76,27 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="drawPolygonButton">
+        <property name="text">
+         <string>Draw polygon</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="startCounterButton">
+        <property name="text">
+         <string>Start</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="stopCounterButton">
+        <property name="text">
+         <string>Stop</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </widget>

@@ -21,13 +21,10 @@
  ***************************************************************************/
 """
 
-import os
+import os, threading, time
 
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSignal
-import DispatchHero_visualisation as visual
-
-from . import utility_functions as uf
+from PyQt4.QtCore import *
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'spatial_decision_dockwidget_base_extra.ui'))
@@ -54,10 +51,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.canvas = self.iface.mapCanvas()
 
         # set up GUI operation signals
-        # GUI button connections
         self.importDataButton.clicked.connect(self.importData)
-
-        # initialisation
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
@@ -67,4 +61,4 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
         if new_file:
             self.iface.addProject(unicode(new_file))
-        
+
