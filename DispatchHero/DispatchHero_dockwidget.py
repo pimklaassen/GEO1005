@@ -21,10 +21,11 @@
  ***************************************************************************/
 """
 
-import os, threading, time
+import os, time
 
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import *
+from PyQt4.QtCore import QThread
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'spatial_decision_dockwidget_base_extra.ui'))
@@ -52,6 +53,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # set up GUI operation signals
         self.importDataButton.clicked.connect(self.importData)
+        self.startCounterButton.clicked.connect(self.startCounter)
+        self.stopCounterButton.clicked.connect(self.stopCounter)
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
@@ -62,3 +65,29 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if new_file:
             self.iface.addProject(unicode(new_file))
 
+    def startCounter(self):
+        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+        fh = open(new_file, 'r')
+        openings = fh.readlines()
+        fh.close()
+        self.dataThread = DataThread(openings)
+        self.dataThread.start()
+
+    def stopCounter(self):
+        self.dataThread.quit()
+
+
+class DataThread(QThread):
+
+    def __init__(self, openings):
+        QThread.__init__(self)
+        self.openings = openings
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        for bridge in self.openings:
+            bridge = bridge.split(',')[0]
+            self.bridgesList.addItem(bridge)
+            self.sleep(5)
