@@ -25,15 +25,16 @@ import os, threading, time
 
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import *
-#from shortest_path import *
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'spatial_decision_dockwidget_base_extra.ui'))
 
 ## added map tools
-from qgis.gui import QgsMapTool
-from qgis.core import QgsMapLayer, QgsMapToPixel, QgsFeature, QgsFeatureRequest, QgsGeometry
-from PyQt4.QtGui import QCursor, QPixmap
+from qgis.gui import QgsMapTool, QgsRubberBand
+from qgis.core import QgsMapLayer, QgsMapToPixel, QgsFeature, QgsFeatureRequest, QgsGeometry, QgsPoint
+from PyQt4.QtGui import QCursor, QPixmap, QColor
 from PyQt4.QtCore import Qt
+#for the shortest path calculations
+from qgis.networkanalysis import *
 
 
 class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
@@ -80,6 +81,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if Polygon == False:
             Polygon = True
         else:
+            # call a function that displays the polygon (rubberBand)
+            # self.reset()
             Polygon = False
         global Polygon
         polygonlist = []
@@ -92,9 +95,7 @@ class NearestFeatureMapTool(QgsMapTool):
         super(QgsMapTool, self).__init__(canvas)
         self.canvas = canvas
         self.cursor = QCursor(Qt.CrossCursor)
-        #self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
-        #self.rubberBand.setColor(Qt.red)
-       # self.rubberBand.setWidth(1)
+        self.layer = ifaceLayer
 
     def activate(self):
         self.canvas.setCursor(self.cursor)
@@ -132,11 +133,10 @@ class NearestFeatureMapTool(QgsMapTool):
         print "detected release"
         print Polygon
         if Polygon == True:
-            #self.reset()
             for layer in self.canvas.layers():
                 if layer.name() == 'Rotterdam roads':
                     LayerPoint = self.toLayerCoordinates(layer, mouseEvent.pos())
-                    polygonlist.append(LayerPoint)
+                    polygonlist.append(QgsPoint(LayerPoint))
                     print polygonlist
 
         if Polygon == False:
@@ -150,38 +150,10 @@ class NearestFeatureMapTool(QgsMapTool):
                     #Ignore as it is not part of the layer with the graph
                     continue
 
-                if layer.featureCount() == 0:
-                    # There are no features - skip
-                    continue
-
-                layer.removeSelection()
-
                 # Determine the location of the click in real-world coords
                 layerPoint = self.toLayerCoordinates(layer, mouseEvent.pos())
                 print layerPoint
-                shortestDistance = float("inf")
-                closestFeatureId = -1
 
-                # Loop through all features in the layer
-                for f in layer.getFeatures():
-                    dist = f.geometry().distance(QgsGeometry.fromPoint(layerPoint))
-                    if dist < shortestDistance:
-                        shortestDistance = dist
-                        closestFeatureId = f.id()
-
-                info = (layer, closestFeatureId, shortestDistance)
-                layerData.append(info)
-
-            if not len(layerData) > 0:
-                # Looks like no vector layers were found - do nothing
-                return
-
-            # Sort the layer information by shortest distance
-            layerData.sort(key=lambda element: element[2])
-            print layerData
-            # Select the closest feature
-            layerWithClosestFeature, closestFeatureId, shortestDistance = layerData[0]
-            layerWithClosestFeature.select(closestFeatureId)
     """
     ###Rubber band tools
     def reset(self):
