@@ -26,7 +26,8 @@ from PyQt4.QtGui import QAction, QIcon
 import resources
 
 # Import the code for the DockWidget
-from DispatchHero_dockwidget import DispatchHeroDockWidget
+from DispatchHero_dockwidget import DispatchHeroDockWidget, NearestFeatureMapTool
+#from shortest_path import NearestFeatureMapTool
 import os.path
 
 
@@ -73,6 +74,7 @@ class DispatchHero:
         self.pluginIsActive = False
         self.dockwidget = None
 
+        #set global variables
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -167,12 +169,18 @@ class DispatchHero:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
+        # Create a new NearestFeatureMapTool and keep reference
+        self.nearestFeatureMapTool = NearestFeatureMapTool(self.iface.mapCanvas())
+
         icon_path = ':/plugins/DispatchHero/icon.png'
-        self.add_action(
+        action = self.add_action(
             icon_path,
             text=self.tr(u'Dispatch Hero'),
             callback=self.run,
             parent=self.iface.mainWindow())
+
+        action.setCheckable(True)
+        self.nearestFeatureMapTool.setAction(action)
 
     #--------------------------------------------------------------------------
 
@@ -206,6 +214,9 @@ class DispatchHero:
         # remove the toolbar
         del self.toolbar
 
+        # Unset the map tool in case it's set
+        self.iface.mapCanvas().unsetMapTool(self.nearestFeatureMapTool)
+
     #--------------------------------------------------------------------------
 
     def run(self):
@@ -221,7 +232,7 @@ class DispatchHero:
             #    removed on close (see self.onClosePlugin method)
             if self.dockwidget == None:
                 # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = DispatchHeroDockWidget()
+                self.dockwidget = DispatchHeroDockWidget(self.iface)
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
@@ -230,4 +241,7 @@ class DispatchHero:
             # TODO: fix to allow choice of dock location
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
+
+        #simply activates the canvas
+        self.iface.mapCanvas().setMapTool(self.nearestFeatureMapTool)
 

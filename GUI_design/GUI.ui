@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1096</width>
-    <height>847</height>
+    <width>1082</width>
+    <height>844</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QFrame" name="Map">
+  <widget class="QFrame" name="display">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -76,7 +76,7 @@
      <pixmap>:/Dispatch/Mapa.jpg</pixmap>
     </property>
    </widget>
-   <widget class="QToolButton" name="toolButton">
+   <widget class="QToolButton" name="zoomInButton">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -96,7 +96,7 @@
      <string>+</string>
     </property>
    </widget>
-   <widget class="QToolButton" name="toolButton_2">
+   <widget class="QToolButton" name="zoomOutButton">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -117,7 +117,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="autoOnButton">
    <property name="geometry">
     <rect>
      <x>580</x>
@@ -130,7 +130,7 @@
     <string>Auto ON</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="autoOffButton">
    <property name="geometry">
     <rect>
      <x>670</x>
@@ -143,7 +143,7 @@
     <string>Auto OFF</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_3">
+  <widget class="QPushButton" name="previousButton">
    <property name="geometry">
     <rect>
      <x>790</x>
@@ -156,7 +156,7 @@
     <string>Previous</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_4">
+  <widget class="QPushButton" name="nextButton">
    <property name="geometry">
     <rect>
      <x>950</x>
@@ -431,7 +431,7 @@ p, li { white-space: pre-wrap; }
     <number>19</number>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_6">
+  <widget class="QPushButton" name="addButton">
    <property name="geometry">
     <rect>
      <x>450</x>

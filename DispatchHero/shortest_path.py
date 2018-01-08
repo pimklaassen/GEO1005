@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- DispatchHeroDockWidget
+ NearestFeature
                                  A QGIS plugin
- This plugin dispatches firetrucks
-                             -------------------
-        begin                : 2017-12-13
+ Selects the nearest feature.
+                              -------------------
+        begin                : 2014-10-15
         git sha              : $Format:%H$
-        copyright            : (C) 2017 by TU Delft
-        email                : pim.o.klaassen@gmail.com
+        copyright            : (C) 2014 by Peter Wells for Lutra Consulting
+        email                : info@lutraconsulting.co.uk
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,71 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-
-import os, threading, time
-
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import *
-#from shortest_path import *
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'spatial_decision_dockwidget_base_extra.ui'))
-
-## added map tools
 from qgis.gui import QgsMapTool
 from qgis.core import QgsMapLayer, QgsMapToPixel, QgsFeature, QgsFeatureRequest, QgsGeometry
 from PyQt4.QtGui import QCursor, QPixmap
 from PyQt4.QtCore import Qt
+#from DispatchHero_dockwidget import DispatchHeroDockWidget to be fixed
 
-
-class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
-
-    closingPlugin = pyqtSignal()
-    #custom signals
-    updateAttribute = QtCore.pyqtSignal(str)
-
-    def __init__(self, iface, parent=None):
-        """Constructor."""
-        super(DispatchHeroDockWidget, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
-        self.setupUi(self)
-
-        #setup global variables
-        self.iface = iface
-        self.canvas = self.iface.mapCanvas()
-
-        # set up GUI operation signals
-        self.importDataButton.clicked.connect(self.importData)
-
-        #self.calcShortestPath.clicked.connect(self.getCanvasLayers)
-        self.drawPolygonButton.clicked.connect(self.drawPolygon)
-
-        #set up variables
-        Polygon = False
-        global Polygon
-
-    def closeEvent(self, event):
-        self.closingPlugin.emit()
-        event.accept()
-
-    def importData(self, filename=''):
-        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
-        if new_file:
-            self.iface.addProject(unicode(new_file))
-        return new_file
-
-    def drawPolygon(self, LayerPoint = (-1,-1)):
-        if Polygon == False:
-            Polygon = True
-        else:
-            Polygon = False
-        global Polygon
-        polygonlist = []
-        global polygonlist
-        print "polygon status", Polygon
 
 class NearestFeatureMapTool(QgsMapTool):
     def __init__(self, canvas):
@@ -92,9 +33,6 @@ class NearestFeatureMapTool(QgsMapTool):
         super(QgsMapTool, self).__init__(canvas)
         self.canvas = canvas
         self.cursor = QCursor(Qt.CrossCursor)
-        #self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
-        #self.rubberBand.setColor(Qt.red)
-       # self.rubberBand.setWidth(1)
 
     def activate(self):
         self.canvas.setCursor(self.cursor)
@@ -130,9 +68,9 @@ class NearestFeatureMapTool(QgsMapTool):
             Select the id of the closes feature
         """
         print "detected release"
-        print Polygon
+        print DispatchHero.Polygon
+        polygonlist = []
         if Polygon == True:
-            #self.reset()
             for layer in self.canvas.layers():
                 if layer.name() == 'Rotterdam roads':
                     LayerPoint = self.toLayerCoordinates(layer, mouseEvent.pos())
@@ -182,74 +120,17 @@ class NearestFeatureMapTool(QgsMapTool):
             # Select the closest feature
             layerWithClosestFeature, closestFeatureId, shortestDistance = layerData[0]
             layerWithClosestFeature.select(closestFeatureId)
-    """
-    ###Rubber band tools
-    def reset(self):
-        self.startPoint = self.endPoint = None
-        self.isEmittingPoint = False
-        self.rubberBand.reset(QGis.Polygon)
-    """
-"""
-class RectangleMapTool(QgsMapTool):
-  def __init__(self, canvas):
-      self.canvas = canvas
-      QgsMapToolEmitPoint.__init__(self, self.canvas)
-      self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
-      self.rubberBand.setColor(Qt.red)
-      self.rubberBand.setWidth(1)
-      self.reset()
 
-  def reset(self):
-      self.startPoint = self.endPoint = None
-      self.isEmittingPoint = False
-      self.rubberBand.reset(QGis.Polygon)
-
-  def canvasPressEvent(self, e):
-      self.startPoint = self.toMapCoordinates(e.pos())
-      self.endPoint = self.startPoint
-      self.isEmittingPoint = True
-      self.showRect(self.startPoint, self.endPoint)
-
-  def canvasReleaseEvent(self, e):
-      self.isEmittingPoint = False
-      r = self.rectangle()
-      if r is not None:
-        print "Rectangle:", r.xMinimum(), r.yMinimum(), r.xMaximum(), r.yMaximum()
-
-  def canvasMoveEvent(self, e):
-      if not self.isEmittingPoint:
-        return
-
-      self.endPoint = self.toMapCoordinates(e.pos())
-      self.showRect(self.startPoint, self.endPoint)
-
-  def showRect(self, startPoint, endPoint):
-      self.rubberBand.reset(QGis.Polygon)
-      if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
-        return
-
-      point1 = QgsPoint(startPoint.x(), startPoint.y())
-      point2 = QgsPoint(startPoint.x(), endPoint.y())
-      point3 = QgsPoint(endPoint.x(), endPoint.y())
-      point4 = QgsPoint(endPoint.x(), startPoint.y())
-
-      self.rubberBand.addPoint(point1, False)
-      self.rubberBand.addPoint(point2, False)
-      self.rubberBand.addPoint(point3, False)
-      self.rubberBand.addPoint(point4, True)    # true to update canvas
-      self.rubberBand.show()
-
-  def rectangle(self):
-      if self.startPoint is None or self.endPoint is None:
-        return None
-      elif self.startPoint.x() == self.endPoint.x() or self.startPoint.y() == self.endPoint.y():
-        return None
-
-      return QgsRectangle(self.startPoint, self.endPoint)
-
-  def deactivate(self):
-      super(RectangleMapTool, self).deactivate()
-      self.emit(SIGNAL("deactivated()"))
-"""
-
-
+    def getCanvasLayers(iface, geom='all', provider='all'):
+        """Return list of valid QgsVectorLayer in QgsMapCanvas, with specific geometry type and/or data provider"""
+        layers_list = []
+        for layer in iface.mapCanvas().layers():
+            add_layer = False
+            if layer.isValid() and layer.type() == QgsMapLayer.VectorLayer:
+                if layer.hasGeometryType() and (geom is 'all' or layer.geometryType() in geom):
+                    if provider is 'all' or layer.dataProvider().name() in provider:
+                        add_layer = True
+            if add_layer:
+                layers_list.append(layer)
+        print "layer list", layers_list
+        return layers_list
