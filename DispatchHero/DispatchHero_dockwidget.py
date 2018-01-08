@@ -95,7 +95,7 @@ class NearestFeatureMapTool(QgsMapTool):
         super(QgsMapTool, self).__init__(canvas)
         self.canvas = canvas
         self.cursor = QCursor(Qt.CrossCursor)
-        self.layer = ifaceLayer
+        self.layer = ifaceLayer #stopped HERE !!!!!!!!!!!!!!!!!!!!!!
 
     def activate(self):
         self.canvas.setCursor(self.cursor)
@@ -138,6 +138,20 @@ class NearestFeatureMapTool(QgsMapTool):
                     LayerPoint = self.toLayerCoordinates(layer, mouseEvent.pos())
                     polygonlist.append(QgsPoint(LayerPoint))
                     print polygonlist
+                    if len(polygonlist)==1:
+                        continue
+                    if len(polygonlist)==2:
+                        r_polyline = QgsRubberBand(canvas, False)
+                        points = [polygonlist]
+                        r.polyline.setToGeometry(QgsGeometry.fromPolyline(points), None)
+                        r.polyline.setWidth(2)
+                    if len(polygonlist)>2:
+                        canvas.scene().removeItem(r_polyline)
+                        r_polygon = QgsRubberBand(canvas, True)
+                        points = [polygonlist]
+                        r_polygon.setToGeometry(QgsGeometry.fromPolygon(points), None)
+                        r_polygon.setColor(QColor(255,0,0))
+                        r_polygon.setWidth(3)
 
         if Polygon == False:
             layerData = []
