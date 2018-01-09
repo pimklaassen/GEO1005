@@ -64,8 +64,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.drawPolygonButton.clicked.connect(self.drawPolygon)
 
         #set up variables
-        Polygon = False
         global Polygon
+        Polygon = False
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
@@ -78,15 +78,15 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         return new_file
 
     def drawPolygon(self, LayerPoint = (-1,-1)):
+        global Polygon
         if Polygon == False:
             Polygon = True
         else:
             # call a function that displays the polygon (rubberBand)
             # self.reset()
             Polygon = False
-        global Polygon
-        polygonlist = []
         global polygonlist
+        polygonlist = []
         print "polygon status", Polygon
 
 class NearestFeatureMapTool(QgsMapTool):
@@ -95,7 +95,14 @@ class NearestFeatureMapTool(QgsMapTool):
         super(QgsMapTool, self).__init__(canvas)
         self.canvas = canvas
         self.cursor = QCursor(Qt.CrossCursor)
-        self.layer = ifaceLayer #stopped HERE !!!!!!!!!!!!!!!!!!!!!!
+        self.drawpolygon = False
+        self.rubberBand = QgsRubberBand(self.canvas, self.drawpolygon)
+        self.rubberBand.setColor(Qt.red)
+        self.rubberBand.setWidth(1)
+        global activelayer
+        for layer in self.canvas.layers():
+            if layer.name() == 'Rotterdam roads':
+                activelayer = layer
 
     def activate(self):
         self.canvas.setCursor(self.cursor)
@@ -133,25 +140,33 @@ class NearestFeatureMapTool(QgsMapTool):
         print "detected release"
         print Polygon
         if Polygon == True:
-            for layer in self.canvas.layers():
-                if layer.name() == 'Rotterdam roads':
-                    LayerPoint = self.toLayerCoordinates(layer, mouseEvent.pos())
-                    polygonlist.append(QgsPoint(LayerPoint))
-                    print polygonlist
-                    if len(polygonlist)==1:
-                        continue
-                    if len(polygonlist)==2:
-                        r_polyline = QgsRubberBand(canvas, False)
-                        points = [polygonlist]
-                        r.polyline.setToGeometry(QgsGeometry.fromPolyline(points), None)
-                        r.polyline.setWidth(2)
-                    if len(polygonlist)>2:
-                        canvas.scene().removeItem(r_polyline)
-                        r_polygon = QgsRubberBand(canvas, True)
-                        points = [polygonlist]
-                        r_polygon.setToGeometry(QgsGeometry.fromPolygon(points), None)
-                        r_polygon.setColor(QColor(255,0,0))
-                        r_polygon.setWidth(3)
+                LayerPoint = self.toLayerCoordinates(activelayer, mouseEvent.pos())
+                polygonlist.append(LayerPoint)
+                print polygonlist
+                if len(polygonlist)==1:
+                    pass
+                if len(polygonlist)==2:
+                    #self.canvas.scene().removeItem(self.rubberBand)
+                    self.drawPolygon = False
+                    points = polygonlist
+                    ptstoadd = []
+                    for point in points:
+                        ptstoadd.append(QgsPoint(point[0], point[1]))
+                        print type(ptstoadd), ptstoadd
+                    self.rubberBand.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
+                    self.rubberBand.setColor(QColor(255, 0, 0))
+                    self.rubberBand.setWidth(2)
+                if len(polygonlist)>2:
+                    #self.canvas.scene().removeItem(self.rubberBand)
+                    self.drawpolygon = True
+                    points = polygonlist
+                    ptstoadd = []
+                    for point in points:
+                        print type(point[0]), point[0], point[1]
+                        ptstoadd.append(QgsPoint(point[0], point[1]))
+                    self.rubberBand.setToGeometry(QgsGeometry.fromPolygon([ptstoadd]), None)
+                    self.rubberBand.setColor(QColor(255,0,0))
+                    self.rubberBand.setWidth(3)
 
         if Polygon == False:
             layerData = []
