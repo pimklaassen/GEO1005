@@ -26,7 +26,7 @@ from PyQt4.QtGui import QAction, QIcon
 import resources
 
 # Import the code for the DockWidget
-from DispatchHero_dockwidget import DispatchHeroDockWidget
+from DispatchHero_dockwidget import DispatchHeroDockWidget, MapTool
 import os.path
 
 
@@ -167,13 +167,18 @@ class DispatchHero:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
+        #Create the MapTool and keep reference
+        self.MapTool = MapTool(self.iface.mapCanvas())
+
         icon_path = ':/plugins/DispatchHero/icon.png'
-        self.add_action(
+        action = self.add_action(
             icon_path,
             text=self.tr(u'Dispatch Hero'),
             callback=self.run,
             parent=self.iface.mainWindow())
+        action.setCheckable(True)
 
+        self.MapTool.setAction(action)
     #--------------------------------------------------------------------------
 
     def onClosePlugin(self):
@@ -205,7 +210,7 @@ class DispatchHero:
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
         del self.toolbar
-
+        self.iface.mapCanvas().unsetMapTool(self.MapTool)
     #--------------------------------------------------------------------------
 
     def run(self):
@@ -230,4 +235,8 @@ class DispatchHero:
             # TODO: fix to allow choice of dock location
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
+        #simply activates the canvas
+        self.iface.MapCanvas().setMapTool(self.MapTool)
+
+
 

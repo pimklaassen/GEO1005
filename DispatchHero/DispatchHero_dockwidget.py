@@ -216,7 +216,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
 class MapTool(QgsMapTool):
     def __init__(self, canvas):
-
+        print 'initiated maptool'
         super(QgsMapTool, self).__init__(canvas)
         self.canvas = canvas
         self.cursor = QCursor(Qt.CrossCursor)
@@ -267,6 +267,7 @@ class MapTool(QgsMapTool):
                 Keep track of the layer id and id of the closest feature
             Select the id of the closes feature
         """
+        print 'detected release'
         for layer in self.canvas.layers():
             if layer.name() == 'roads':
                 self.activelayer = layer
