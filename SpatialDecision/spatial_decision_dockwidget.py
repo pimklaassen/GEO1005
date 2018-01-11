@@ -682,7 +682,7 @@ class TimedEvent(QtCore.QThread):
     timerError = QtCore.pyqtSignal()
 
     def __init__(self, parentThread, parentObject, settings):
-        QtCore.QThread.__init__(self, parentThread)
+        QtCore.QThread.__init__(self, parentThread) 
         self.parent = parentObject
         self.input_settings = settings
         self.running = False
