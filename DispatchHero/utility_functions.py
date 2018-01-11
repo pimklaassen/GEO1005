@@ -4,7 +4,7 @@
 
 from PyQt4 import QtGui, QtCore
 from qgis.core import *
-# from qgis.networkanalysis import *
+from qgis.networkanalysis import *
 
 # from pyspatialite import dbapi2 as sqlite
 # import psycopg2 as pgsql
@@ -54,7 +54,7 @@ def makeUndirectedGraph(network_layer, points=list):
         graph = builder.graph()
     return graph, tied_points
 
-    
+
 def calculateRouteDijkstra(graph, tied_points, origin, destination, impedance=0):
     points = []
     if tied_points:
