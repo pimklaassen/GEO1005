@@ -62,7 +62,7 @@
       <item>
        <widget class="QLabel" name="bridges">
         <property name="text">
-         <string>Open bridges</string>
+         <string>Bridges Log</string>
         </property>
        </widget>
       </item>

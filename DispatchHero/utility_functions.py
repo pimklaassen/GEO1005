@@ -28,4 +28,4 @@ class BridgeParser():
 
 	def generator(self):
 		for time in self.timeSlots:
-			yield self.timeDict[time]
+			yield self.timeDict[time], time
