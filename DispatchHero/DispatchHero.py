@@ -27,7 +27,6 @@ import resources
 
 # Import the code for the DockWidget
 from DispatchHero_dockwidget import DispatchHeroDockWidget, MapTool
-#from shortest_path import NearestFeatureMapTool
 import os.path
 
 
@@ -170,7 +169,7 @@ class DispatchHero:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         # Create a new NearestFeatureMapTool and keep reference
-        self.nearestFeatureMapTool = NearestFeatureMapTool(self.iface.mapCanvas())
+        self.MapTool = MapTool(self.iface.mapCanvas())
 
         icon_path = ':/plugins/DispatchHero/icon.png'
         action = self.add_action(
@@ -180,7 +179,7 @@ class DispatchHero:
             parent=self.iface.mainWindow())
 
         action.setCheckable(True)
-        self.nearestFeatureMapTool.setAction(action)
+        self.MapTool.setAction(action)
 
     #--------------------------------------------------------------------------
 
@@ -215,7 +214,7 @@ class DispatchHero:
         del self.toolbar
 
         # Unset the map tool in case it's set
-        self.iface.mapCanvas().unsetMapTool(self.nearestFeatureMapTool)
+        self.iface.mapCanvas().unsetMapTool(self.MapTool)
 
     #--------------------------------------------------------------------------
 
@@ -243,5 +242,5 @@ class DispatchHero:
             self.dockwidget.show()
 
         #simply activates the canvas
-        self.iface.mapCanvas().setMapTool(self.nearestFeatureMapTool)
+        self.iface.mapCanvas().setMapTool(self.MapTool)
 
