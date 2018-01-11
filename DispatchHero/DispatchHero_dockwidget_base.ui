@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1208</width>
+    <width>1382</width>
     <height>859</height>
    </rect>
   </property>
@@ -29,6 +29,117 @@
     <attribute name="title">
      <string>Tab 1</string>
     </attribute>
+    <widget class="QPushButton" name="startCounterButton">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>736</y>
+       <width>345</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Start</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="drawPolygonButton">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>701</y>
+       <width>345</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Draw polygon</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="trucks">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>50</y>
+       <width>345</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Active trucks</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="trucksList">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>73</y>
+       <width>345</width>
+       <height>261</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="bridges">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>341</y>
+       <width>345</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Open bridges</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="bridgesList">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>364</y>
+       <width>345</width>
+       <height>260</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="stopCounterButton">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>771</y>
+       <width>345</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stop</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="importDataButton">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>631</y>
+       <width>345</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Import map</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="calcShortestPath">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>666</y>
+       <width>345</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Shortest path</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="Decisions">
     <attribute name="title">
@@ -402,23 +513,8 @@
       </item>
      </layout>
     </widget>
-    <zorder>horizontalLayoutWidget</zorder>
-    <zorder>verticalLayoutWidget</zorder>
-    <zorder>verticalLayoutWidget</zorder>
-    <zorder>verticalLayoutWidget_3</zorder>
-    <zorder>horizontalLayoutWidget</zorder>
-    <zorder>Auto_ON</zorder>
-    <zorder>Accept</zorder>
-    <zorder>Auto_OFF</zorder>
-    <zorder>Stop</zorder>
-    <zorder>verticalLayoutWidget_4</zorder>
-    <zorder>Avalilable</zorder>
-    <zorder>horizontalLayoutWidget_5</zorder>
    </widget>
   </widget>
-  <zorder>horizontalLayoutWidget_2</zorder>
-  <zorder>tabWidget</zorder>
-  <zorder>label_9</zorder>
  </widget>
  <resources/>
  <connections/>
