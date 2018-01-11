@@ -87,7 +87,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             Polygon = False
         global polygonlist
         polygonlist = []
-        print "polygon status", Polygon
 
 class NearestFeatureMapTool(QgsMapTool):
     def __init__(self, canvas):
@@ -97,15 +96,16 @@ class NearestFeatureMapTool(QgsMapTool):
         self.cursor = QCursor(Qt.CrossCursor)
         self.rubberBandPolyline = QgsRubberBand(self.canvas, False)
         self.rubberBandPolygon = QgsRubberBand(self.canvas, True)
-        self.rubberBandPath1 = QgsRubberBand(self.canvas, False)
         self.rubberBandPath2 = QgsRubberBand(self.canvas, False)
         self.rubberBandPath3 = QgsRubberBand(self.canvas, False)
+        self.rubberBandPath1 = QgsRubberBand(self.canvas, False)
         #for the shortest path
         self.graph = QgsGraph()
         self.tied_points = []
         self.firestation_coord = (92619.8,436539)
         self.changes = True  #to be set by the thread when data read changes!!!
         self.origin_init = False
+        #clean the canvas - !!! to be fixed !!!
 
     def activate(self):
         self.canvas.setCursor(self.cursor)
@@ -140,14 +140,12 @@ class NearestFeatureMapTool(QgsMapTool):
                 Keep track of the layer id and id of the closest feature
             Select the id of the closes feature
         """
-        print "detected release"
         for layer in self.canvas.layers():
             if layer.name() == 'Rotterdam roads':
                 self.activelayer = layer
         if Polygon == True:
                 LayerPoint = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
                 polygonlist.append(LayerPoint)
-                print polygonlist
                 if len(polygonlist)==1:
                     pass
                 if len(polygonlist)==2:
@@ -159,7 +157,7 @@ class NearestFeatureMapTool(QgsMapTool):
                     self.rubberBandPolyline.setColor(QColor(255, 0, 0))
                     self.rubberBandPolyline.setWidth(10)
                 if len(polygonlist)>2:
-                    self.canvas.scene().removeItem(self.rubberBandPolyline) #check if it works
+                    self.canvas.scene().removeItem(self.rubberBandPolyline)
                     points = polygonlist
                     ptstoadd = []
                     for point in points:
@@ -175,9 +173,10 @@ class NearestFeatureMapTool(QgsMapTool):
             #shortest path algorythm
             if self.changes == True:
                 self.buildNetwork()
-                if self.graph and self.tied_points:
-                    self.calculateRoute()
                 self.changes = False
+            if self.graph and self.tied_points:
+                self.calculateRoute()
+            return
 
     def buildNetwork(self):
         for layer in self.canvas.layers():
@@ -196,11 +195,9 @@ class NearestFeatureMapTool(QgsMapTool):
             # build the graph including these points
             if len(self.source_points) > 1:
                 self.graph, self.tied_points = uf.makeUndirectedGraph(self.network_layer, self.source_points)
-                print self.tied_points
                 # the tied points are the new source_points on the graph
                 if self.graph and self.tied_points:
                     text = "network is built for %s points" % len(self.tied_points)
-                    print text
             shortestdistance = float("inf")
             if self.origin_init == False:
                 for point in self.tied_points:
@@ -210,12 +207,10 @@ class NearestFeatureMapTool(QgsMapTool):
                         self.closestpoint_start = point
             self.origin_index = self.tied_points.index(self.closestpoint_start)
             self.origin_init = True
-            print self.graph
         return
 
     def calculateRoute(self):
         # origin and destination must be in the set of tied_points
-        print 'entered calculation'
         shortestdistance = float("inf")
         for point in self.tied_points:
             sqrdist = (point[0] - self.destination[0])**2 + (point[1] - self.destination[1])**2
@@ -223,35 +218,39 @@ class NearestFeatureMapTool(QgsMapTool):
                 shortestdistance = sqrdist
                 self.closestpoint_end = point
         self.destination_index = self.tied_points.index(self.closestpoint_end)
-        self.x_diff = self.firestation_coord[0] - self.destination[0]
-        self.y_diff = self.firestation_coord[1] - self.destination[1]
-        self.eucl_distance = math.sqrt(self.x_diff ** 2 + self.y_diff ** 2)
         options = len(self.tied_points)
         if options > 1:
             # calculate the shortest path for the given origin and destination
             path = uf.calculateRouteDijkstra(self.graph, self.tied_points, self.origin_index, self.destination_index)
-            print 'obtained path1', len(path)
-            print path
-            # display the route on the map:
+            #display the route
             if len(path) > 1:
-                print 'entered path1 drawing'
                 ptstoadd = []
                 for point in path:
                     ptstoadd.append(QgsPoint(point[0], point[1]))
                 self.rubberBandPath1.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                self.rubberBandPath1.setColor(QColor(0, 255, 0))
+                self.rubberBandPath1.setColor(QColor(128, 255, 0))
                 self.rubberBandPath1.setWidth(3)
             #determine via points for the alternative routings
             if path:
-                new_point1_x = self.firestation_coord[0]-self.x_diff/2-self.y_diff/2
-                new_point1_y = self.firestation_coord[1]-self.y_diff/2+self.x_diff/2
-                new_point2_x = self.firestation_coord[0]-self.x_diff/2+self.y_diff/2
-                new_point2_y = self.firestation_coord[1]-self.y_diff/2-self.x_diff/2
+                self.x_diff = self.firestation_coord[0] - self.destination[0]
+                self.y_diff = self.firestation_coord[1] - self.destination[1]
+                self.eucl_distance = math.sqrt(self.x_diff ** 2 + self.y_diff ** 2)
+                print self.eucl_distance
+                if self.eucl_distance < 1000:
+                    factor = 2
+                elif self.eucl_distance < 3000:
+                    factor = 1
+                elif self.eucl_distance < 6000:
+                    factor = 0.5
+                else:
+                    factor = 0.25
+                new_point1_x = (self.firestation_coord[0]+self.destination[0])/2+self.y_diff*factor
+                new_point1_y = (self.firestation_coord[1]+self.destination[1])/2-self.x_diff*factor
+                new_point2_x = (self.firestation_coord[0]+self.destination[0])/2-self.y_diff*factor
+                new_point2_y = (self.firestation_coord[1]+self.destination[1])/2+self.x_diff*factor
                 self.via_points = [(new_point1_x,new_point1_y), (new_point2_x, new_point2_y)]
-                print "via_points", self.via_points
                 #determine the alternative roude node_points which have a crossing
                 self.via_tied_points_index = []
-                print "raw via pts", self.via_points,
                 for via in self.via_points:
                     shortestdistance = float("inf")
                     for crosspoint in self.sourcepoint_layer.getFeatures():
@@ -265,7 +264,6 @@ class NearestFeatureMapTool(QgsMapTool):
                         for point in self.tied_points:
                             diff = (round(via_point_coord[0],1) - round(point[0],1))**2 + (round(via_point_coord[1],1) - round(point[1],1))**2
                             if diff < lowestdiff:
-                                print "found a point", diff
                                 lowestdiff = diff
                                 lowestdiff_point = point
                         if lowestdiff_point:
@@ -273,20 +271,23 @@ class NearestFeatureMapTool(QgsMapTool):
                             self.via_tied_points_index.append(via_point_index)
                 #calculate the alternative routes
                 display_indicator = 2
+                alt_path = dict()
                 for via_index in self.via_tied_points_index:
                     alt_path1 = uf.calculateRouteDijkstra(self.graph, self.tied_points, self.origin_index, via_index)
                     alt_path2 = uf.calculateRouteDijkstra(self.graph, self.tied_points, via_index, self.destination_index)
                     if len(alt_path1)>1 and len(alt_path2)>1:
-                        alt_path = alt_path1+alt_path2
+                        alt_path[display_indicator] = alt_path1+alt_path2
                     ptstoadd = []
-                    for point in alt_path:
+                    for point in alt_path[display_indicator]:
                         ptstoadd.append(QgsPoint(point[0], point[1]))
+                #display the alternative route layers
                     if display_indicator == 2:
                         self.rubberBandPath2.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                        self.rubberBandPath2.setColor(QColor(0, 0, 255))
+                        self.rubberBandPath2.setColor(QColor(51, 102, 0))
                         self.rubberBandPath2.setWidth(3)
                     if display_indicator == 3:
                         self.rubberBandPath3.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                        self.rubberBandPath3.setColor(QColor(120, 120, 120))
+                        self.rubberBandPath3.setColor(QColor(102, 51, 0))
                         self.rubberBandPath3.setWidth(3)
                     display_indicator +=1
+        return path, alt_path[2], alt_path[3]
