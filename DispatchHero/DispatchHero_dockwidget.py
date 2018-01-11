@@ -74,6 +74,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         self.Truck_station_add.clicked.connect(self.add_station_instance)
         self.Truck_route_add.clicked.connect(self.add_route_instance)
+        self.Add_truck.clicked.connect(self.add_truck_instance)
+        self.Delete_truck.clicked.connect(self.delete_truck_instance)
 
         self.Auto_ON.clicked.connect(self.autoOn)
         self.Auto_OFF.clicked.connect(self.autoOff)
@@ -158,8 +160,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.In_route_list.addItem(self.In_station_list.takeItem(self.In_station_list.currentRow()))
         pass
 
+    def add_truck_instance(self):
+        self.In_station_list.addItem(self.Truck_text.text())
+        self.Truck_text.setText('')
+
     def delete_truck_instance(self):
-        self.Trucks.removeRow(self.Trucks.currentRow())
+        self.In_station_list.takeItem(self.In_station_list.currentRow())
         pass
 
     def click1(self):

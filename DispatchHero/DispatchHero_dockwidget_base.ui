@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1382</width>
-    <height>859</height>
+    <width>662</width>
+    <height>849</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QTabWidget" name="Tab">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>10</y>
+     <x>0</x>
+     <y>0</y>
      <width>661</width>
      <height>851</height>
     </rect>
@@ -150,7 +150,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>261</width>
+       <width>301</width>
        <height>271</height>
       </rect>
      </property>
@@ -186,48 +186,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QListWidget" name="In_station_list">
-          <item>
-           <property name="text">
-            <string>casca</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>s</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>asc</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>as</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>a</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>sc</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>a</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>sc</string>
-           </property>
-          </item>
-         </widget>
+         <widget class="QListWidget" name="In_station_list"/>
         </item>
         <item>
          <widget class="QListWidget" name="In_route_list"/>
@@ -257,7 +216,7 @@
     <widget class="QWidget" name="verticalLayoutWidget_3">
      <property name="geometry">
       <rect>
-       <x>310</x>
+       <x>330</x>
        <y>0</y>
        <width>321</width>
        <height>261</height>
@@ -309,8 +268,8 @@
     <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>570</y>
+       <x>60</x>
+       <y>600</y>
        <width>302</width>
        <height>183</height>
       </rect>
@@ -388,8 +347,8 @@
     <widget class="QPushButton" name="Auto_ON">
      <property name="geometry">
       <rect>
-       <x>340</x>
-       <y>580</y>
+       <x>390</x>
+       <y>610</y>
        <width>93</width>
        <height>28</height>
       </rect>
@@ -401,8 +360,8 @@
     <widget class="QPushButton" name="Accept">
      <property name="geometry">
       <rect>
-       <x>390</x>
-       <y>710</y>
+       <x>440</x>
+       <y>740</y>
        <width>93</width>
        <height>28</height>
       </rect>
@@ -414,8 +373,8 @@
     <widget class="QPushButton" name="Auto_OFF">
      <property name="geometry">
       <rect>
-       <x>430</x>
-       <y>580</y>
+       <x>480</x>
+       <y>610</y>
        <width>93</width>
        <height>28</height>
       </rect>
@@ -427,8 +386,8 @@
     <widget class="QPushButton" name="Stop">
      <property name="geometry">
       <rect>
-       <x>390</x>
-       <y>680</y>
+       <x>440</x>
+       <y>710</y>
        <width>93</width>
        <height>28</height>
       </rect>
@@ -440,8 +399,8 @@
     <widget class="QWidget" name="verticalLayoutWidget_4">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>310</y>
+       <x>60</x>
+       <y>340</y>
        <width>541</width>
        <height>231</height>
       </rect>
@@ -481,8 +440,8 @@
     <widget class="QCheckBox" name="Avalilable">
      <property name="geometry">
       <rect>
-       <x>400</x>
-       <y>610</y>
+       <x>450</x>
+       <y>640</y>
        <width>121</width>
        <height>61</height>
       </rect>
@@ -494,8 +453,8 @@
     <widget class="QWidget" name="horizontalLayoutWidget_5">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>760</y>
+       <x>130</x>
+       <y>790</y>
        <width>180</width>
        <height>31</height>
       </rect>
@@ -510,6 +469,35 @@
          <string>Station number     </string>
         </property>
        </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>270</y>
+       <width>301</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="New_truck">
+      <item>
+       <widget class="QPushButton" name="Add_truck">
+        <property name="text">
+         <string>Add Truck</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="Delete_truck">
+        <property name="text">
+         <string>Delete Truck</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="Truck_text"/>
       </item>
      </layout>
     </widget>
