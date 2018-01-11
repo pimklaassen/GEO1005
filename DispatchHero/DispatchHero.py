@@ -73,6 +73,7 @@ class DispatchHero:
         self.pluginIsActive = False
         self.dockwidget = None
 
+        #set global variables
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -167,7 +168,7 @@ class DispatchHero:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        #Create the MapTool and keep reference
+        # Create a new NearestFeatureMapTool and keep reference
         self.MapTool = MapTool(self.iface.mapCanvas())
 
         icon_path = ':/plugins/DispatchHero/icon.png'
@@ -176,9 +177,10 @@ class DispatchHero:
             text=self.tr(u'Dispatch Hero'),
             callback=self.run,
             parent=self.iface.mainWindow())
-        action.setCheckable(True)
 
+        action.setCheckable(True)
         self.MapTool.setAction(action)
+
     #--------------------------------------------------------------------------
 
     def onClosePlugin(self):
@@ -210,7 +212,10 @@ class DispatchHero:
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
         del self.toolbar
+
+        # Unset the map tool in case it's set
         self.iface.mapCanvas().unsetMapTool(self.MapTool)
+
     #--------------------------------------------------------------------------
 
     def run(self):
@@ -235,8 +240,7 @@ class DispatchHero:
             # TODO: fix to allow choice of dock location
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
+
         #simply activates the canvas
-        self.iface.MapCanvas().setMapTool(self.MapTool)
-
-
+        self.iface.mapCanvas().setMapTool(self.MapTool)
 

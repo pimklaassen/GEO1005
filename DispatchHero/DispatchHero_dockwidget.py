@@ -229,8 +229,8 @@ class MapTool(QgsMapTool):
         self.graph = QgsGraph()
         self.tied_points = []
         self.firestation_coord = (92619.8,436539)
-        # global changes 
-        # changes = True  #to be set by the thread when data read changes!!!
+        global changes
+        changes = True  #to be set by the thread when data read changes!!!
         self.origin_init = False
         #clean the canvas - !!! to be fixed !!!
 
