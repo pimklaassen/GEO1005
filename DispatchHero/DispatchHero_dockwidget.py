@@ -151,7 +151,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.bridgesLayer.commitChanges()
         self.roadsLayer.commitChanges()
 
-        # changes = True
+        MapTool.changes = True
 
     def startCounter(self):
         # prepare the thread of the timed even or long loop
@@ -216,7 +216,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
 class MapTool(QgsMapTool):
     def __init__(self, canvas):
-        print 'initiated maptool'
         super(QgsMapTool, self).__init__(canvas)
         self.canvas = canvas
         self.cursor = QCursor(Qt.CrossCursor)
@@ -229,10 +228,10 @@ class MapTool(QgsMapTool):
         self.graph = QgsGraph()
         self.tied_points = []
         self.firestation_coord = (92619.8,436539)
-        global changes
-        changes = True  #to be set by the thread when data read changes!!!
+        self.changes = True  #to be set by the thread when data read changes!!!
         self.origin_init = False
         #clean the canvas - !!! to be fixed !!!
+        print 'initiated maptool'
 
     def activate(self):
         self.canvas.setCursor(self.cursor)
@@ -299,16 +298,16 @@ class MapTool(QgsMapTool):
             self.destination = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
 
             #shortest path algorythm
-            if changes == True:
+            if self.changes == True:
                 self.buildNetwork()
-                changes = False
+                self.changes = False
             if self.graph and self.tied_points:
                 self.calculateRoute()
             return
 
     def buildNetwork(self):
         for layer in self.canvas.layers():
-            if layer.name() == 'Rotterdam roads':
+            if layer.name() == 'roads':
                 self.network_layer = layer
         for layer in self.canvas.layers():
             if layer.name() == 'graph tie points':
