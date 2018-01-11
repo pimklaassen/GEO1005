@@ -268,7 +268,7 @@ class MapTool(QgsMapTool):
             Select the id of the closes feature
         """
         for layer in self.canvas.layers():
-            if layer.name() == 'Rotterdam roads':
+            if layer.name() == 'roads':
                 self.activelayer = layer
         if Polygon == True:
                 LayerPoint = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
