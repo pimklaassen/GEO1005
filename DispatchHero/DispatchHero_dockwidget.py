@@ -154,29 +154,48 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def cancelCounter(self):
         # triggered if the user clicks the cancel button
+        
+        # resetting the roads to available again
+        self.roadsLayer.startEditing()
+        for feature in self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
+            self.roadsLayer.changeAttributeValue(feature.id(), 1, 1)
+        self.roadsLayer.commitChanges()
+
+        # stop the thread
         self.timerThread.stop()
         try:
             self.timerThread.timerFinished.disconnect(self.concludeCounter)
             self.timerThread.timerError.disconnect(self.cancelCounter)
+            self.timerThread.displayBridges.disconnect(self.showBridges)
         except:
             pass
         self.timerThread = None
         self.startCounterButton.setDisabled(False)
         self.stopCounterButton.setDisabled(True)
+        self.iface.messageBar().pushMessage("Info", "Simulation canceled", level=0, duration=8)
 
     def concludeCounter(self, result):
         # clean up timer thread stuff
+
+        # resetting the roads to available again
+        self.roadsLayer.startEditing()
+        for feature in self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
+            self.roadsLayer.changeAttributeValue(feature.id(), 1, 1)
+        self.roadsLayer.commitChanges()
+
+        # stop the thread
         self.timerThread.stop()
         try:
             self.timerThread.timerFinished.disconnect(self.concludeCounter)
             self.timerThread.timerError.disconnect(self.cancelCounter)
+            self.timerThread.displayBridges.disconnect(self.showBridges)
         except:
             pass
         self.timerThread = None
         self.startCounterButton.setDisabled(False)
         self.stopCounterButton.setDisabled(True)
         # do something with the results
-        self.iface.messageBar().pushMessage("Info", "The counter results: %s" % result, level=0, duration=5)
+        self.iface.messageBar().pushMessage("Info", "Simulation finished", level=0, duration=8)
 
 
 class TimedEvent(QtCore.QThread):
@@ -217,7 +236,6 @@ class TimedVesselEvent(QtCore.QThread):
     timerFinished = QtCore.pyqtSignal(list)
     timerProgress = QtCore.pyqtSignal(int)
     timerError = QtCore.pyqtSignal()
-    displayBridges = QtCore.pyqtSignal(tuple)
 
     def __init__(self, parentThread, parentObject, bridges):
         QtCore.QThread.__init__(self, parentThread)
@@ -232,9 +250,6 @@ class TimedVesselEvent(QtCore.QThread):
         for bridgeTime in self.bridges:
             jump = 10
             recorded.append(jump)
-            
-            self.displayBridges.emit(bridgeTime)
-            
             time.sleep(jump)
             progress += jump
             self.timerProgress.emit(progress)
