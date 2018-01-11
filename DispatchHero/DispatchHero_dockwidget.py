@@ -79,51 +79,61 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 self.roadsLayer = layer
 
     def showBridges(self, bridgeTime):
-        t = time.time()
 
+        # setup vairables
         bridge_ids = bridgeTime[0]
         bridge_time = bridgeTime[1]
+
+        # creating query for the open bridges
         query = """"id" = '{}'""".format(bridge_ids[0])
         if len(bridge_ids) > 1:
             for b in bridge_ids[1:]:
                 query += """ or "id" = '{}'""".format(b)
+
+        # adding the open bridges to the log
         for b in bridge_ids:
             log = '{}: {}'.format(bridge_time[11:], b[:12])
             self.bridgesList.addItem(log)
+
+        # creating a selection of open bridges, and all bridges
         selection = self.bridgesLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         features = self.bridgesLayer.getFeatures()
+
+        # start editting the layers
         self.bridgesLayer.startEditing()
         self.roadsLayer.startEditing()
 
+        # now first close the bridges that were previously open
         if len(self.openingRoads) == 0:
             pass
         else:
             query = """"sid" = {}""".format(self.openingRoads[0])
-            
             if len(self.openingRoads) > 1:
                 for road in self.openingRoads[1:]:
                     query += """ or "sid" = '{}'""".format(road)
             road_selection = self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-            
             for road in road_selection:
                 self.roadsLayer.changeAttributeValue(road.id(), 1, 1)
 
+        # cleaning the list, for next open bridges
         self.openingRoads = []
 
+        # close all bridges to open correct ones
         for feature in features:
             self.bridgesLayer.changeAttributeValue(feature.id(), 2, 'closed')
 
+        # go through open bridges and update existing road network for availability
         for feature in selection:
             self.bridgesLayer.changeAttributeValue(feature.id(), 2, 'open')
             sid = feature.attributes()[0]
             self.openingRoads.append(int(sid))
 
+            # updating the road network
             closing_roads = self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression('"sid" = {}'.format(sid)))
             for road in closing_roads:
                 self.roadsLayer.changeAttributeValue(road.id(), 1, 0)
 
-            
-
+        # committing the changes to the layers
         self.bridgesLayer.commitChanges()
         self.roadsLayer.commitChanges()
 
