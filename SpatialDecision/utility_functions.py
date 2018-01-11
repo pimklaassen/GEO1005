@@ -31,9 +31,6 @@ import math
 import os.path
 
 
-#
-# Layer functions
-#
 def getLegendLayers(iface, geom='all', provider='all'):
     """
     Return list of layer objects in the legend, with specific geometry type and/or data provider
