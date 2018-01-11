@@ -88,7 +88,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         global polygonlist
         polygonlist = []
 
-class NearestFeatureMapTool(QgsMapTool):
+class MapTool(QgsMapTool):
     def __init__(self, canvas):
 
         super(QgsMapTool, self).__init__(canvas)

@@ -26,7 +26,7 @@ from PyQt4.QtGui import QAction, QIcon
 import resources
 
 # Import the code for the DockWidget
-from DispatchHero_dockwidget import DispatchHeroDockWidget, NearestFeatureMapTool
+from DispatchHero_dockwidget import DispatchHeroDockWidget, MapTool
 #from shortest_path import NearestFeatureMapTool
 import os.path
 
