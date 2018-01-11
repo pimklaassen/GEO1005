@@ -385,7 +385,8 @@ class MapTool(QgsMapTool):
                             sqrdist = (via[0]-crosspoint.attribute('X'))**2 + (via[1]-crosspoint.attribute('Y'))**2
                             if sqrdist < shortestdistance:
                                 shortestdistance = sqrdist
-                                via_point_coord = (round(crosspoint.attribute('X'), 1), round(crosspoint.attribute('Y'), 0))
+                                via_point_coord = (crosspoint.attribute('X'), crosspoint.attribute('Y'))
+                                print "via_points_coord", via_point_coord
                     if via_point_coord:
                         lowestdiff = float("inf")
                         for point in self.tied_points:
