@@ -284,7 +284,7 @@ class MapTool(QgsMapTool):
                     for point in points:
                         ptstoadd.append(QgsPoint(point[0], point[1]))
                     self.rubberBandPolyline.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                    self.rubberBandPolyline.setColor(QColor(255, 0, 0))
+                    self.rubberBandPolyline.setColor(QColor(200, 50, 50))
                     self.rubberBandPolyline.setWidth(10)
                 if len(polygonlist)>2:
                     self.canvas.scene().removeItem(self.rubberBandPolyline)
@@ -293,7 +293,7 @@ class MapTool(QgsMapTool):
                     for point in points:
                         ptstoadd.append(QgsPoint(point[0], point[1]))
                     self.rubberBandPolygon.setToGeometry(QgsGeometry.fromPolygon([ptstoadd]), None)
-                    self.rubberBandPolygon.setBorderColor(QColor(255,0,0))
+                    self.rubberBandPolygon.setBorderColor(QColor(200,50,50))
                     self.rubberBandPolygon.setWidth(10)
 
         if Polygon == False:
@@ -435,7 +435,7 @@ class MapTool(QgsMapTool):
                     ptstoadd = []
                     for point in alt_path[display_indicator]:
                         ptstoadd.append(QgsPoint(point[0], point[1]))
-                #display the alternative route layers
+                #display the alternative route layers and adapt the zoom
                     if display_indicator == 2:
                         self.rubberBandPath2.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
                         self.rubberBandPath2.setColor(QColor(51, 102, 0))
@@ -445,6 +445,7 @@ class MapTool(QgsMapTool):
                         self.rubberBandPath3.setColor(QColor(102, 51, 0))
                         self.rubberBandPath3.setWidth(3)
                     display_indicator +=1
+                self.canvas.setExtent(self.rubberBandPath1.extent())
         return path, alt_path[2], alt_path[3]
 
 class TimedEvent(QtCore.QThread):
