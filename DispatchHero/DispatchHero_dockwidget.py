@@ -149,6 +149,9 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # committing the changes to the layers
         self.bridgesLayer.commitChanges()
+
+
+
         self.roadsLayer.commitChanges()
 
         MapTool.changes = True
@@ -229,7 +232,7 @@ class MapTool(QgsMapTool):
         self.tied_points = []
         self.firestation_coord = (92619.8,436539)
         self.changes = True  #to be set by the thread when data read changes!!!
-        self.origin_init = False
+        self.init_names = False
         #clean the canvas - !!! to be fixed !!!
         print 'initiated maptool'
 
@@ -306,12 +309,37 @@ class MapTool(QgsMapTool):
             return
 
     def buildNetwork(self):
-        for layer in self.canvas.layers():
-            if layer.name() == 'roads':
-                self.network_layer = layer
-        for layer in self.canvas.layers():
-            if layer.name() == 'graph tie points':
-                self.sourcepoint_layer = layer
+        #the first time the network is built, the layers need to be found basing on their names
+        if self.init_names == False:
+            for layer in self.canvas.layers():
+                if layer.name() == 'roads':
+                    self.network_layer_original = layer
+            for layer in self.canvas.layers():
+                if layer.name() == 'roads copy':
+                    self.network_layer = layer
+            for layer in self.canvas.layers():
+                if layer.name() == 'graph tie points':
+                    self.sourcepoint_layer = layer
+        #each time the network is built, the open bridges need to be removed from the copy
+        if self.init_names == False:
+            deletelist_new = []
+            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 2')):
+                deletelist_new.append(feature)
+            self.network_layer.dataProvider().deleteFeatures(deletelist_new)
+            self.deletelist_old = deletelist_new
+        if self.init_names == True:
+            deletelist_new = []
+            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 1')):
+                if feature in self.deletelist_old:
+                    self.network_layer.dataProvider().addFeatures(feature)
+                    print "re-added", feature
+            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
+                deletelist_new.append(feature)
+            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 2')):
+                deletelist_new.append(feature)
+            res = self.network_layer.dataProvider().deleteFeatures(deletelist_new)
+            print "deleted", res
+            self.deletelist_old = deletelist_new
         if self.network_layer:
             # get the points to be used as origin and destination
             # in this case gets the centroid of the selected features
@@ -326,14 +354,15 @@ class MapTool(QgsMapTool):
                 if self.graph and self.tied_points:
                     text = "network is built for %s points" % len(self.tied_points)
             shortestdistance = float("inf")
-            if self.origin_init == False:
+            #here the closest tied_point to the firestation is identified
+            if self.init_names == False:
                 for point in self.tied_points:
                     sqrdist = (point[0]-self.firestation_coord[0])**2 + (point[1]-self.firestation_coord[1])**2
                     if sqrdist < shortestdistance:
                         shortestdistance = sqrdist
                         self.closestpoint_start = point
             self.origin_index = self.tied_points.index(self.closestpoint_start)
-            self.origin_init = True
+            self.init_names = True
         return
 
     def calculateRoute(self):
@@ -362,7 +391,6 @@ class MapTool(QgsMapTool):
                 self.x_diff = self.firestation_coord[0] - self.destination[0]
                 self.y_diff = self.firestation_coord[1] - self.destination[1]
                 self.eucl_distance = math.sqrt(self.x_diff ** 2 + self.y_diff ** 2)
-                print self.eucl_distance
                 if self.eucl_distance < 1000:
                     factor = 2
                 elif self.eucl_distance < 3000:
@@ -386,7 +414,6 @@ class MapTool(QgsMapTool):
                             if sqrdist < shortestdistance:
                                 shortestdistance = sqrdist
                                 via_point_coord = (crosspoint.attribute('X'), crosspoint.attribute('Y'))
-                                print "via_points_coord", via_point_coord
                     if via_point_coord:
                         lowestdiff = float("inf")
                         for point in self.tied_points:
