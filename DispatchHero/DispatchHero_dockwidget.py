@@ -59,6 +59,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.iface = iface
         self.canvas = self.iface.mapCanvas()
         self.openingRoads = []
+        self.zoomextent = (0,0,0,0)
 
         # set up GUI operation signals
         self.importDataButton.clicked.connect(self.importData)
@@ -71,7 +72,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.closingPlugin.emit()
         event.accept()
 
-    def drawPolygon(self, LayerPoint = (-1,-1)):
+    def drawPolygon(self):
         global Polygon
         if Polygon == False:
             Polygon = True
@@ -305,8 +306,29 @@ class MapTool(QgsMapTool):
                 self.buildNetwork()
                 self.changes = False
             if self.graph and self.tied_points:
-                self.calculateRoute()
-            return
+                path1, path2, path3 = self.calculateRoute()
+            #change the zoom setting
+            all_paths = path1 + path2 + path3
+            x_max = float("-inf")
+            x_min = float("inf")
+            y_max = float("-inf")
+            y_min = float("inf")
+            for coord in all_paths:
+                if coord[0] > x_max:
+                    x_max = coord[0]
+                if coord[0] < x_min:
+                    x_min = coord[0]
+                if coord[1] > y_max:
+                    y_max = coord[1]
+                if coord[1] < y_min:
+                    y_min = coord[1]
+            zoomextent = (x_min, y_min, x_max, y_max)
+            #self.adaptzoom(zoomextent)
+
+    """def adaptzoom(self, zoomextent):
+        self.canvas.zoomToExtent(QgsRectangle(zoomextent))
+        self.canvas.refresh()
+        print "frozen canvas?", DispatchHeroDockWidget.canvas.isFrozen()"""
 
     def buildNetwork(self):
         #the first time the network is built, the layers need to be found basing on their names
@@ -445,7 +467,6 @@ class MapTool(QgsMapTool):
                         self.rubberBandPath3.setColor(QColor(102, 51, 0))
                         self.rubberBandPath3.setWidth(3)
                     display_indicator +=1
-                self.canvas.setExtent(self.rubberBandPath1.extent())
         return path, alt_path[2], alt_path[3]
 
 class TimedEvent(QtCore.QThread):
