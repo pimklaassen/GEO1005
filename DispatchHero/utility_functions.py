@@ -42,6 +42,29 @@ class BridgeParser():
 			yield self.timeDict[time], time
 
 
+class vesselParser():
+
+    def __init__(self, openFileObject):
+        self.lines = openFileObject.readlines()
+        self.time_slot = []
+        self.dict_list = []
+        self.init_time = 832332
+
+    def parse(self):
+        for line in self.lines:
+            d = eval(line)
+            t = (int(str(d['time'])[4:-3]) - self.init_time) / 10.0
+            d['time'] = t
+            self.time_slot.append(t)
+            self.dict_list.append(d)
+
+    def generator(self):
+        for t in self.time_slot:
+            for d in self.dict_list:
+                if d['time'] == t:
+                    yield d, t
+
+
 def makeUndirectedGraph(network_layer, points=list):
     graph = None
     tied_points = []

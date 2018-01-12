@@ -31,11 +31,10 @@ from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.core import *
 import processing
 from qgis.networkanalysis import *
+from . import globvars
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'spatial_decision_dockwidget_base_extra.ui'))
-
-# global variables
 
 class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
@@ -59,6 +58,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.iface = iface
         self.canvas = self.iface.mapCanvas()
         self.openingRoads = []
+        self.states = {}
 
         # set up GUI operation signals
         self.importDataButton.clicked.connect(self.importData)
@@ -92,6 +92,63 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             elif layer.name() == u'roads':
                 self.roadsLayer = layer
 
+        self.bridgesLayer.startEditing()
+        for br in self.bridgesLayer.getFeatures():
+            attrs = br.attributes()
+            
+            self.bridgesLayer.changeAttributeValue(br.id(), 2, 'closed')
+            
+            br = attrs[1]
+            tr = attrs[2]
+            self.states[br] = tr
+        self.bridgesLayer.commitChanges()
+
+    def resetLayers(self):
+        self.bridgesLayer.startEditing()
+        for br in self.bridgesLayer.getFeatures():
+            attrs = br.attributes()
+            self.bridgesLayer.changeAttributeValue(br.id(), 2, 'closed')
+        self.bridgesLayer.commitChanges()
+
+        self.roadsLayer.startEditing()
+        query = '"available" = 0'
+        for br in self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query)):
+            attrs = br.attributes()
+            self.roadsLayer.changeAttributeValue(br.id(), 1, 1)
+        self.roadsLayer.commitChanges()
+
+    def logVessels(self, vesselTime):
+        obj = vesselTime[0]
+
+        # set conditional to ship
+        if obj['speed'] <= 5:
+            return
+        if obj['length'] < 80:
+            return
+
+        # condition passed, assign the bridge
+        pending_bridge = 'Erasmusbrug'\
+        if (obj['brige'] == 'erasmus')\
+        else 'GRT02_9de96a85-078b-4954-82ad-3bec2e22a75b'
+
+        # selecting the bridge
+        query = """"id" = '{}'""".format(pending_bridge)
+        features = self.bridgesLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+
+        # iterate through selection
+        for feat in features:
+            status = feat.attributes()[2]
+
+            # check if bridge is open, if so, return (because already red)
+            if status == 'open':
+                return
+
+            # now change the layer
+            self.bridgesLayer.startEditing()
+            self.bridgesLayer.changeAttributeValue(feat.id(), 2, 'pending')
+            self.bridgesLayer.commitChanges()
+        print pending_bridge, ' GOING TO OPEN FOR ', obj['name'], '. Speed: {}, Length: {}'.format(obj['speed'], obj['length'])
+
     def showBridges(self, bridgeTime):
 
         # setup vairables
@@ -117,7 +174,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.bridgesLayer.startEditing()
         self.roadsLayer.startEditing()
 
-        # now first close the bridges that were previously open
+        # now first close the roads that were previously open
         if len(self.openingRoads) == 0:
             pass
         else:
@@ -134,11 +191,15 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # close all bridges to open correct ones
         for feature in features:
+            if feature.attributes()[2] == 'pending':
+                continue
             self.bridgesLayer.changeAttributeValue(feature.id(), 2, 'closed')
+            self.states[feature.attributes()[2]] = 'closed'
 
         # go through open bridges and update existing road network for availability
         for feature in selection:
             self.bridgesLayer.changeAttributeValue(feature.id(), 2, 'open')
+            self.states[feature.attributes()[2]] = 'open'
             sid = feature.attributes()[0]
             self.openingRoads.append(int(sid))
 
@@ -151,7 +212,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.bridgesLayer.commitChanges()
         self.roadsLayer.commitChanges()
 
-        MapTool.changes = True
+        globvars.changes = True
 
     def startCounter(self):
         # prepare the thread of the timed even or long loop
@@ -163,7 +224,18 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.timerThread.timerFinished.connect(self.concludeCounter)
         self.timerThread.timerError.connect(self.cancelCounter)
         self.timerThread.displayBridges.connect(self.showBridges)
+
+        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+        fh = open(new_file, 'r')
+        self.vesselGenerator = uf.vesselParser(fh)
+        self.vesselGenerator.parse()
+        self.vesselThread = TimedVesselEvent(self.iface.mainWindow(), self, self.vesselGenerator.generator())
+        self.vesselThread.timerFinished.connect(self.concludeCounter)
+        self.vesselThread.timerError.connect(self.cancelCounter)
+        self.vesselThread.displayVessels.connect(self.logVessels)
+
         self.timerThread.start()
+        self.vesselThread.start()
         # from here the timer is running in the background on a separate thread. user can continue working on QGIS.
         self.startCounterButton.setDisabled(True)
         self.stopCounterButton.setDisabled(False)
@@ -179,15 +251,21 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # stop the thread
         self.timerThread.stop()
+        self.vesselThread.stop()
         try:
             self.timerThread.timerFinished.disconnect(self.concludeCounter)
             self.timerThread.timerError.disconnect(self.cancelCounter)
             self.timerThread.displayBridges.disconnect(self.showBridges)
+
+            self.vesselThread.timerFinished.disconnect(self.concludeCounter)
+            self.vesselThread.timerError.disconnect(self.cancelCounter)
+            self.vesselThread.displayVessels.diconnect(self.logVessels)
         except:
             pass
         self.timerThread = None
         self.startCounterButton.setDisabled(False)
         self.stopCounterButton.setDisabled(True)
+        self.resetLayers()
         self.iface.messageBar().pushMessage("Info", "Simulation canceled", level=0, duration=8)
 
     def concludeCounter(self, result):
@@ -201,15 +279,21 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # stop the thread
         self.timerThread.stop()
+        self.vesselThread.stop()
         try:
             self.timerThread.timerFinished.disconnect(self.concludeCounter)
             self.timerThread.timerError.disconnect(self.cancelCounter)
             self.timerThread.displayBridges.disconnect(self.showBridges)
+
+            self.vesselThread.timerFinished.disconnect(self.concludeCounter)
+            self.vesselThread.timerError.disconnect(self.cancelCounter)
+            self.vesselThread.displayVessels.diconnect(self.logVessels)
         except:
             pass
         self.timerThread = None
         self.startCounterButton.setDisabled(False)
         self.stopCounterButton.setDisabled(True)
+        self.resetLayers()
         # do something with the results
         self.iface.messageBar().pushMessage("Info", "Simulation finished", level=0, duration=8)
 
@@ -227,11 +311,9 @@ class MapTool(QgsMapTool):
         #for the shortest path
         self.graph = QgsGraph()
         self.tied_points = []
-        self.firestation_coord = (92619.8,436539)
-        self.changes = True  #to be set by the thread when data read changes!!!
         self.origin_init = False
+        self.firestation_coord = (92619.8, 436539)
         #clean the canvas - !!! to be fixed !!!
-        print 'initiated maptool'
 
     def activate(self):
         self.canvas.setCursor(self.cursor)
@@ -266,7 +348,6 @@ class MapTool(QgsMapTool):
                 Keep track of the layer id and id of the closest feature
             Select the id of the closes feature
         """
-        print 'detected release'
         for layer in self.canvas.layers():
             if layer.name() == 'roads':
                 self.activelayer = layer
@@ -298,9 +379,9 @@ class MapTool(QgsMapTool):
             self.destination = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
 
             #shortest path algorythm
-            if self.changes == True:
+            if globvars.changes == True:
                 self.buildNetwork()
-                self.changes = False
+                globvars.changes = False
             if self.graph and self.tied_points:
                 self.calculateRoute()
             return
@@ -458,20 +539,24 @@ class TimedVesselEvent(QtCore.QThread):
     timerFinished = QtCore.pyqtSignal(list)
     timerProgress = QtCore.pyqtSignal(int)
     timerError = QtCore.pyqtSignal()
+    displayVessels = QtCore.pyqtSignal(tuple)
 
-    def __init__(self, parentThread, parentObject, bridges):
+    def __init__(self, parentThread, parentObject, vessels):
         QtCore.QThread.__init__(self, parentThread)
         self.parent = parentObject
-        self.bridges = bridges
+        self.vessels = vessels
         self.running = False
 
     def run(self):
         self.running = True
         progress = 0
         recorded = []
-        for bridgeTime in self.bridges:
-            jump = 10
+        for vesselTime in self.vessels:
+            jump = vesselTime[1]
             recorded.append(jump)
+
+            self.displayVessels.emit(vesselTime)
+
             time.sleep(jump)
             progress += jump
             self.timerProgress.emit(progress)

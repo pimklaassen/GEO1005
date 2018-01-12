@@ -24,11 +24,11 @@ from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt4.QtGui import QAction, QIcon
 # Initialize Qt resources from file resources.py
 import resources
+from . import globvars
 
 # Import the code for the DockWidget
 from DispatchHero_dockwidget import DispatchHeroDockWidget, MapTool
 import os.path
-
 
 class DispatchHero:
     """QGIS Plugin Implementation."""
@@ -41,11 +41,16 @@ class DispatchHero:
             application at run time.
         :type iface: QgsInterface
         """
+
+
         # Save reference to the QGIS interface
         self.iface = iface
 
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
+
+        # global initiation
+        globvars.init()
 
         # initialize locale
         locale = QSettings().value('locale/userLocale')[0:2]
@@ -74,6 +79,7 @@ class DispatchHero:
         self.dockwidget = None
 
         #set global variables
+        
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -225,7 +231,6 @@ class DispatchHero:
             self.pluginIsActive = True
 
             #print "** STARTING DispatchHero"
-
             # dockwidget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)

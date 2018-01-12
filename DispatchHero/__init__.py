@@ -30,6 +30,6 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    #
+    # 
     from .DispatchHero import DispatchHero
     return DispatchHero(iface)
