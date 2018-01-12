@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1152</width>
-    <height>849</height>
+    <width>1369</width>
+    <height>1689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>0</x>
      <y>0</y>
      <width>661</width>
-     <height>851</height>
+     <height>711</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -29,180 +29,225 @@
     <attribute name="title">
      <string>Designer</string>
     </attribute>
-    <widget class="QPushButton" name="startCounterButton">
+    <widget class="QWidget" name="verticalLayoutWidget_6">
      <property name="geometry">
       <rect>
-       <x>130</x>
-       <y>736</y>
-       <width>345</width>
-       <height>28</height>
+       <x>120</x>
+       <y>10</y>
+       <width>351</width>
+       <height>241</height>
       </rect>
      </property>
-     <property name="text">
-      <string>Start</string>
-     </property>
+     <layout class="QVBoxLayout" name="OpenBriges">
+      <item>
+       <widget class="QLabel" name="bridges">
+        <property name="text">
+         <string>Open bridges</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListWidget" name="bridgesList"/>
+      </item>
+     </layout>
     </widget>
-    <widget class="QPushButton" name="drawPolygonButton">
+    <widget class="QWidget" name="verticalLayoutWidget_5">
      <property name="geometry">
       <rect>
-       <x>130</x>
-       <y>701</y>
-       <width>345</width>
-       <height>28</height>
+       <x>120</x>
+       <y>270</y>
+       <width>341</width>
+       <height>141</height>
       </rect>
      </property>
-     <property name="text">
-      <string>Draw polygon</string>
-     </property>
+     <layout class="QVBoxLayout" name="Decision_buttons">
+      <item>
+       <widget class="QPushButton" name="drawPolygonButton">
+        <property name="text">
+         <string>Draw polygon</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="startCounterButton">
+        <property name="text">
+         <string>Start</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="stopCounterButton">
+        <property name="text">
+         <string>Stop</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="importDataButton">
+        <property name="text">
+         <string>Import map</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
-    <widget class="QLabel" name="trucks">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>50</y>
-       <width>345</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Active trucks</string>
-     </property>
-    </widget>
-    <widget class="QListWidget" name="trucksList">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>73</y>
-       <width>345</width>
-       <height>261</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="bridges">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>341</y>
-       <width>345</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Open bridges</string>
-     </property>
-    </widget>
-    <widget class="QListWidget" name="bridgesList">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>364</y>
-       <width>345</width>
-       <height>260</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="stopCounterButton">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>771</y>
-       <width>345</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Stop</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="importDataButton">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>631</y>
-       <width>345</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Import map</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="calcShortestPath">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>666</y>
-       <width>345</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Shortest path</string>
-     </property>
-    </widget>
+    <zorder>verticalLayoutWidget_6</zorder>
+    <zorder>verticalLayoutWidget_6</zorder>
+    <zorder>verticalLayoutWidget_5</zorder>
    </widget>
    <widget class="QWidget" name="Decisions">
     <attribute name="title">
      <string>Dispatcher</string>
     </attribute>
-    <widget class="QWidget" name="verticalLayoutWidget">
+    <widget class="QWidget" name="verticalLayoutWidget_4">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>450</y>
+       <width>551</width>
+       <height>231</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="Message_window">
+      <item>
+       <widget class="QLabel" name="label_8">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Message window</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <item>
+         <widget class="QPushButton" name="Add_message">
+          <property name="text">
+           <string>Add</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="Route_message"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QListWidget" name="Message_display"/>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="verticalLayoutWidget_2">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>301</width>
-       <height>271</height>
+       <width>131</width>
+       <height>151</height>
       </rect>
      </property>
-     <layout class="QVBoxLayout" name="Trucks">
+     <layout class="QVBoxLayout" name="Routes">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
-        <item>
-         <widget class="QLabel" name="label_5">
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>   In station</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QLabel" name="label_7">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>     Routes</string>
+        </property>
+       </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QListWidget" name="In_station_list">
-          <item>
-           <property name="text">
-            <string>0001_coche_A_L</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>0002_coche_B_M</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>0003_coche_T_H</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QPushButton" name="Route1">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="acceptDrops">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(128, 255, 0);</string>
+        </property>
+        <property name="text">
+         <string>Route 1</string>
+        </property>
+       </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4"/>
+       <widget class="QPushButton" name="Route2">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(51, 102, 0);</string>
+        </property>
+        <property name="text">
+         <string>Route 2</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="Route3">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(102, 51, 0);</string>
+        </property>
+        <property name="text">
+         <string>Route 3</string>
+        </property>
+       </widget>
       </item>
      </layout>
+    </widget>
+    <widget class="QPushButton" name="Auto_OFF">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>50</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Auto OFF</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Auto_ON">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>50</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Auto ON</string>
+     </property>
     </widget>
     <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>340</x>
+       <x>350</x>
        <y>0</y>
        <width>302</width>
        <height>161</height>
@@ -278,37 +323,37 @@
       </item>
      </layout>
     </widget>
-    <widget class="QPushButton" name="Auto_ON">
+    <widget class="QPushButton" name="Help">
      <property name="geometry">
       <rect>
-       <x>390</x>
-       <y>610</y>
+       <x>190</x>
+       <y>80</y>
        <width>93</width>
        <height>28</height>
       </rect>
      </property>
      <property name="text">
-      <string>Auto ON</string>
+      <string>Help</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Auto_OFF">
+    <widget class="QRadioButton" name="Reassign">
      <property name="geometry">
       <rect>
-       <x>480</x>
-       <y>610</y>
-       <width>93</width>
-       <height>28</height>
+       <x>200</x>
+       <y>120</y>
+       <width>95</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="text">
-      <string>Auto OFF</string>
+      <string>Reassign</string>
      </property>
     </widget>
     <widget class="QPushButton" name="Stop">
      <property name="geometry">
       <rect>
-       <x>440</x>
-       <y>570</y>
+       <x>200</x>
+       <y>20</y>
        <width>93</width>
        <height>28</height>
       </rect>
@@ -317,66 +362,12 @@
       <string>Stop</string>
      </property>
     </widget>
-    <widget class="QWidget" name="verticalLayoutWidget_4">
-     <property name="geometry">
-      <rect>
-       <x>40</x>
-       <y>320</y>
-       <width>541</width>
-       <height>231</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="Message_window">
-      <item>
-       <widget class="QLabel" name="label_8">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Message window</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
-        <item>
-         <widget class="QPushButton" name="Add_message">
-          <property name="text">
-           <string>Add</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="Route_message"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QListWidget" name="Message_display"/>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QCheckBox" name="Avalilable">
-     <property name="geometry">
-      <rect>
-       <x>450</x>
-       <y>640</y>
-       <width>121</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Help</string>
-     </property>
-    </widget>
     <widget class="QWidget" name="horizontalLayoutWidget_2">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>280</y>
-       <width>301</width>
+       <y>410</y>
+       <width>641</width>
        <height>31</height>
       </rect>
      </property>
@@ -400,11 +391,64 @@
       </item>
      </layout>
     </widget>
+    <widget class="QWidget" name="verticalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>180</y>
+       <width>301</width>
+       <height>221</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="Trucks">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Trucks in station</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QListWidget" name="In_station_list">
+          <item>
+           <property name="text">
+            <string>0001_coche_A_L</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>0002_coche_B_M</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>0003_coche_T_H</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
     <widget class="QWidget" name="verticalLayoutWidget_3">
      <property name="geometry">
       <rect>
-       <x>40</x>
-       <y>560</y>
+       <x>320</x>
+       <y>180</y>
        <width>331</width>
        <height>221</height>
       </rect>
@@ -426,84 +470,6 @@
       </item>
       <item>
        <widget class="QListWidget" name="Trucks_in_route"/>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QWidget" name="verticalLayoutWidget_2">
-     <property name="geometry">
-      <rect>
-       <x>330</x>
-       <y>160</y>
-       <width>319</width>
-       <height>151</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="Routes">
-      <item>
-       <widget class="QLabel" name="label_7">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>                     Routes</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="Route1">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="acceptDrops">
-         <bool>false</bool>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(128, 255, 0);</string>
-        </property>
-        <property name="text">
-         <string>Route 1</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="Route2">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(51, 102, 0);</string>
-        </property>
-        <property name="text">
-         <string>Route 2</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="Route3">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(102, 51, 0);</string>
-        </property>
-        <property name="text">
-         <string>Route 3</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>

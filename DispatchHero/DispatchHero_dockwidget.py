@@ -81,6 +81,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         self.Stop.clicked.connect(self.cancelSelection)
 
+        self.Help.clicked.connect(self.request_help)
+
         # set up GUI operation signals
         self.importDataButton.clicked.connect(self.importData)
 
@@ -104,10 +106,16 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.closingPlugin.emit()
         event.accept()
 
+    def request_help(self):
+        self.Message_display.clear()
+        self.Message_display.addItem("----------------------------------")
+        self.Message_display.addItem("Station full")
+        self.Message_display.addItem("----------------------------------")
+
     def autoOn(self):
         self.Message_display.clear()
         car = self.Trucks_in_route.currentItem().text()
-        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + car + ".txt"
+        name = "car" + car + ".txt"
         file = open(name, 'r')
         with file:
             for line in file:
@@ -128,7 +136,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def autoOff(self):
         self.Message_display.clear()
         car = self.Trucks_in_route.currentItem().text()
-        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + car + ".txt"
+        name = "car" + car + ".txt"
         file = open(name, 'r')
         with file:
             for line in file:
@@ -149,7 +157,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def cancelSelection(self):
         self.Message_display.clear()
         car = self.Trucks_in_route.currentItem().text()
-        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + car + ".txt"
+        name = "car" + car + ".txt"
         file = open(name, 'r')
         with file:
             for line in file:
@@ -178,7 +186,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def add_message_alert(self):
         self.Message_display.clear()
         car = self.Trucks_in_route.currentItem().text()
-        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car"+ car + ".txt"
+        name = "car"+ car + ".txt"
         file = open(name,'r')
         with file:
             for line in file:
@@ -197,58 +205,99 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.Route_message.setText('')
         self.Route_message.setFocus()
         file.close
-
         pass
 
     def select_route_1(self):
-        self.Message_display.clear()
-        Truck = self.In_station_list.currentItem().text()
-        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + Truck + ".txt"
-        file = open(name, 'a')
-        self.Message_display.addItem("----------------------------------")
-        self.Trucks_in_route.addItem(Truck)
-        self.Message_display.addItem(Truck)
-        self.Message_display.addItem("Follow route 1")
-        self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
-        file.write(Truck + "\n")
-        file.write("Follow route 1\n")
-        file.write("----------------------------------\n")
-        self.In_station_list.takeItem(self.In_station_list.currentRow())
+        if self.Reassign.isChecked() == True:
+            self.Message_display.clear()
+            Truck = self.Trucks_in_route.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Reassigned route 1")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Reassigned route 1\n")
+            file.write("----------------------------------\n")
+        else:
+            self.Message_display.clear()
+            Truck = self.In_station_list.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Trucks_in_route.addItem(Truck)
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Follow route 1")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Follow route 1\n")
+            file.write("----------------------------------\n")
+            self.In_station_list.takeItem(self.In_station_list.currentRow())
         pass
 
     def select_route_2(self):
-        self.Message_display.clear()
-        Truck = self.In_station_list.currentItem().text()
-        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + Truck + ".txt"
-        file = open(name, 'a')
-        self.Message_display.addItem("----------------------------------")
-        self.Trucks_in_route.addItem(Truck)
-        self.Message_display.addItem(Truck)
-        self.Message_display.addItem("Follow route 2")
-        self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
-        file.write(Truck + "\n")
-        file.write("Follow route 2\n")
-        file.write("----------------------------------\n")
-        self.In_station_list.takeItem(self.In_station_list.currentRow())
+        if self.Reassign.isChecked() == True:
+            self.Message_display.clear()
+            Truck = self.Trucks_in_route.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Reassigned route 2")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Reassigned route 2\n")
+            file.write("----------------------------------\n")
+        else:
+            self.Message_display.clear()
+            Truck = self.In_station_list.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Trucks_in_route.addItem(Truck)
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Follow route 2")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Follow route 2\n")
+            file.write("----------------------------------\n")
+            self.In_station_list.takeItem(self.In_station_list.currentRow())
         pass
 
     def select_route_3(self):
-        self.Message_display.clear()
-        Truck = self.In_station_list.currentItem().text()
-        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + Truck + ".txt"
-        file = open(name, 'a')
-        self.Message_display.addItem("----------------------------------")
-        self.Trucks_in_route.addItem(Truck)
-        self.Message_display.addItem(Truck)
-        self.Message_display.addItem("Follow route 3")
-        self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
-        file.write(Truck + "\n")
-        file.write("Follow route 3\n")
-        file.write("----------------------------------\n")
-        self.In_station_list.takeItem(self.In_station_list.currentRow())
+        if self.Reassign.isChecked() == True:
+            self.Message_display.clear()
+            Truck = self.Trucks_in_route.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Reassigned route 3")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Reassigned route 3\n")
+            file.write("----------------------------------\n")
+        else:
+            self.Message_display.clear()
+            Truck = self.In_station_list.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Trucks_in_route.addItem(Truck)
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Follow route 3")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Follow route 3\n")
+            file.write("----------------------------------\n")
+            self.In_station_list.takeItem(self.In_station_list.currentRow())
         pass
 
     def add_truck_instance(self):
@@ -257,18 +306,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def delete_truck_instance(self):
         self.In_station_list.takeItem(self.In_station_list.currentRow())
-        pass
-
-    def click1(self):
-        pass
-
-    def click2(self):
-        pass
-
-    def click3(self):
-        pass
-
-    def click4(self):
         pass
 
     def importData(self, filename=''):
