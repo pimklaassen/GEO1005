@@ -65,15 +65,14 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # setup global variables
         self.iface = iface
         self.canvas = self.iface.mapCanvas()
-        self.Add_Route.clicked.connect(self.addlist_routes)
 
         # setup Decisions interface
-        self.Delete.clicked.connect(self.delete_routes)
-
         self.Add_message.clicked.connect(self.add_message_alert)
 
-        self.Truck_station_add.clicked.connect(self.add_station_instance)
-        self.Truck_route_add.clicked.connect(self.add_route_instance)
+        self.Route1.clicked.connect(self.select_route_1)
+        self.Route2.clicked.connect(self.select_route_2)
+        self.Route3.clicked.connect(self.select_route_3)
+
         self.Add_truck.clicked.connect(self.add_truck_instance)
         self.Delete_truck.clicked.connect(self.delete_truck_instance)
 
@@ -81,7 +80,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.Auto_OFF.clicked.connect(self.autoOff)
 
         self.Stop.clicked.connect(self.cancelSelection)
-        self.Accept.clicked.connect(self.dispatch)
 
         # set up GUI operation signals
         self.importDataButton.clicked.connect(self.importData)
@@ -107,30 +105,68 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         event.accept()
 
     def autoOn(self):
+        self.Message_display.clear()
+        car = self.Trucks_in_route.currentItem().text()
+        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + car + ".txt"
+        file = open(name, 'r')
+        with file:
+            for line in file:
+                self.Message_display.addItem(line)
+
+        file = open(name, 'a')
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        Truck = self.Trucks_in_route.currentItem().text()
+        self.Message_display.addItem(Truck)
+        file.write(Truck + "\n")
+        self.Message_display.addItem("Auto-dispatch active\n")
+        file.write("Auto-dispatch active\n")
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
         pass
 
     def autoOff(self):
-        pass
+        self.Message_display.clear()
+        car = self.Trucks_in_route.currentItem().text()
+        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + car + ".txt"
+        file = open(name, 'r')
+        with file:
+            for line in file:
+                self.Message_display.addItem(line)
 
-    def previous(self):
-        pass
-
-    def next(self):
-        pass
-
-    def addButton(self):
+        file = open(name, 'a')
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        Truck = self.Trucks_in_route.currentItem().text()
+        self.Message_display.addItem(Truck)
+        file.write(Truck + "\n")
+        self.Message_display.addItem("Auto-dispatch desactive\n")
+        file.write("Auto-dispatch desactive\n")
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
         pass
 
     def cancelSelection(self):
-        pass
+        self.Message_display.clear()
+        car = self.Trucks_in_route.currentItem().text()
+        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + car + ".txt"
+        file = open(name, 'r')
+        with file:
+            for line in file:
+                self.Message_display.addItem(line)
 
-    def drawPolygon(self):
-        pass
-
-    def dispatch(self):
-        pass
-
-    def setDestination(self):
+        file = open(name, 'a')
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        Truck = self.Trucks_in_route.currentItem().text()
+        self.Message_display.addItem(Truck)
+        file.write(Truck + "\n")
+        self.Message_display.addItem("Cancel route\n")
+        file.write("Cancel route\n")
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        self.In_station_list.addItem(Truck)
+        self.Trucks_in_route.takeItem(self.Trucks_in_route.currentRow())
         pass
 
     def addlist_routes(self):
@@ -139,25 +175,80 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.Route_name.setFocus()
         pass
 
-    def delete_routes(self):
-        self.Routes.takeItem(self.Routes.currentRow())
-        pass
-
-    def show_routes(self):
-        pass
-
     def add_message_alert(self):
+        self.Message_display.clear()
+        car = self.Trucks_in_route.currentItem().text()
+        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car"+ car + ".txt"
+        file = open(name,'r')
+        with file:
+            for line in file:
+                self.Message_display.addItem(line)
+
+        file = open(name, 'a')
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        Truck = self.Trucks_in_route.currentItem().text()
+        self.Message_display.addItem(Truck)
+        file.write(Truck+"\n")
         self.Message_display.addItem(self.Route_message.text())
+        file.write(self.Route_message.text()+ "\n")
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
         self.Route_message.setText('')
         self.Route_message.setFocus()
+        file.close
+
         pass
 
-    def add_station_instance(self):
-        self.In_station_list.addItem(self.In_route_list.takeItem(self.In_route_list.currentRow()))
+    def select_route_1(self):
+        self.Message_display.clear()
+        Truck = self.In_station_list.currentItem().text()
+        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + Truck + ".txt"
+        file = open(name, 'a')
+        self.Message_display.addItem("----------------------------------")
+        self.Trucks_in_route.addItem(Truck)
+        self.Message_display.addItem(Truck)
+        self.Message_display.addItem("Follow route 1")
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        file.write(Truck + "\n")
+        file.write("Follow route 1\n")
+        file.write("----------------------------------\n")
+        self.In_station_list.takeItem(self.In_station_list.currentRow())
         pass
 
-    def add_route_instance(self):
-        self.In_route_list.addItem(self.In_station_list.takeItem(self.In_station_list.currentRow()))
+    def select_route_2(self):
+        self.Message_display.clear()
+        Truck = self.In_station_list.currentItem().text()
+        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + Truck + ".txt"
+        file = open(name, 'a')
+        self.Message_display.addItem("----------------------------------")
+        self.Trucks_in_route.addItem(Truck)
+        self.Message_display.addItem(Truck)
+        self.Message_display.addItem("Follow route 2")
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        file.write(Truck + "\n")
+        file.write("Follow route 2\n")
+        file.write("----------------------------------\n")
+        self.In_station_list.takeItem(self.In_station_list.currentRow())
+        pass
+
+    def select_route_3(self):
+        self.Message_display.clear()
+        Truck = self.In_station_list.currentItem().text()
+        name = "D:\Geomatics\GEO1005\GitHub\DispatchHero\Trucks_instances" + "\car" + Truck + ".txt"
+        file = open(name, 'a')
+        self.Message_display.addItem("----------------------------------")
+        self.Trucks_in_route.addItem(Truck)
+        self.Message_display.addItem(Truck)
+        self.Message_display.addItem("Follow route 3")
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        file.write(Truck + "\n")
+        file.write("Follow route 3\n")
+        file.write("----------------------------------\n")
+        self.In_station_list.takeItem(self.In_station_list.currentRow())
         pass
 
     def add_truck_instance(self):
