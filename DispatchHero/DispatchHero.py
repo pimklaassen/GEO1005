@@ -29,6 +29,9 @@ import resources
 from DispatchHero_dockwidget import DispatchHeroDockWidget, MapTool
 import os.path
 
+#global variables
+from . import globvars.py
+
 
 class DispatchHero:
     """QGIS Plugin Implementation."""
