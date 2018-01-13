@@ -132,21 +132,30 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         else 'GRT02_9de96a85-078b-4954-82ad-3bec2e22a75b'
 
         # selecting the bridge
-        query = """"id" = '{}'""".format(pending_bridge)
-        features = self.bridgesLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        query_bridge = """"id" = '{}'""".format(pending_bridge)
+        features = self.bridgesLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query_bridge))
 
         # iterate through selection
         for feat in features:
             status = feat.attributes()[2]
+            bridge_road = feat.attributes()[0]
 
             # check if bridge is open, if so, return (because already red)
             if status == 'open':
                 return
 
-            # now change the layer
+            # now change the layers
             self.bridgesLayer.startEditing()
             self.bridgesLayer.changeAttributeValue(feat.id(), 2, 'pending')
             self.bridgesLayer.commitChanges()
+
+            # and for the roads
+            query = '"sid" = {}'.format(bridge_road)
+            self.roadsLayer.startEditing()
+            for road in self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query)):
+                self.roadsLayer.changeAttributeValue(road.id(), 1, 2)
+            self.roadsLayer.commitChanges()
+
         print pending_bridge, ' GOING TO OPEN FOR ', obj['name'], '. Speed: {}, Length: {}'.format(obj['speed'], obj['length'])
 
     def showBridges(self, bridgeTime):
@@ -266,6 +275,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.startCounterButton.setDisabled(False)
         self.stopCounterButton.setDisabled(True)
         self.resetLayers()
+        self.bridgesList.clear()
         self.iface.messageBar().pushMessage("Info", "Simulation canceled", level=0, duration=8)
 
     def concludeCounter(self, result):
@@ -294,6 +304,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.startCounterButton.setDisabled(False)
         self.stopCounterButton.setDisabled(True)
         self.resetLayers()
+        self.bridgesList.clear()
         # do something with the results
         self.iface.messageBar().pushMessage("Info", "Simulation finished", level=0, duration=8)
 
