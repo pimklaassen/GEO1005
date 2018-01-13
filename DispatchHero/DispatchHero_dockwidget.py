@@ -322,9 +322,11 @@ class MapTool(QgsMapTool):
         #for the shortest path
         self.graph = QgsGraph()
         self.tied_points = []
-        self.origin_init = False
-        self.firestation_coord = (92619.8, 436539)
+        self.firestation_coord = (92619.8,436539)
+        globvars.changes = True
+        self.init_names = False
         #clean the canvas - !!! to be fixed !!!
+        print 'initiated maptool'
 
     def activate(self):
         self.canvas.setCursor(self.cursor)
@@ -359,6 +361,7 @@ class MapTool(QgsMapTool):
                 Keep track of the layer id and id of the closest feature
             Select the id of the closes feature
         """
+        print 'detected release'
         for layer in self.canvas.layers():
             if layer.name() == 'roads':
                 self.activelayer = layer
@@ -373,7 +376,7 @@ class MapTool(QgsMapTool):
                     for point in points:
                         ptstoadd.append(QgsPoint(point[0], point[1]))
                     self.rubberBandPolyline.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                    self.rubberBandPolyline.setColor(QColor(255, 0, 0))
+                    self.rubberBandPolyline.setColor(QColor(200, 50, 50))
                     self.rubberBandPolyline.setWidth(10)
                 if len(polygonlist)>2:
                     self.canvas.scene().removeItem(self.rubberBandPolyline)
@@ -382,7 +385,7 @@ class MapTool(QgsMapTool):
                     for point in points:
                         ptstoadd.append(QgsPoint(point[0], point[1]))
                     self.rubberBandPolygon.setToGeometry(QgsGeometry.fromPolygon([ptstoadd]), None)
-                    self.rubberBandPolygon.setBorderColor(QColor(255,0,0))
+                    self.rubberBandPolygon.setBorderColor(QColor(200,50,50))
                     self.rubberBandPolygon.setWidth(10)
 
         if Polygon == False:
@@ -392,18 +395,69 @@ class MapTool(QgsMapTool):
             #shortest path algorythm
             if globvars.changes == True:
                 self.buildNetwork()
+                "changes detected, rebuilds network"
                 globvars.changes = False
             if self.graph and self.tied_points:
-                self.calculateRoute()
-            return
+                path1, path2, path3 = self.calculateRoute()
+            #change the zoom setting
+            all_paths = path1 + path2 + path3
+            x_max = float("-inf")
+            x_min = float("inf")
+            y_max = float("-inf")
+            y_min = float("inf")
+            for coord in all_paths:
+                if coord[0] > x_max:
+                    x_max = coord[0]
+                if coord[0] < x_min:
+                    x_min = coord[0]
+                if coord[1] > y_max:
+                    y_max = coord[1]
+                if coord[1] < y_min:
+                    y_min = coord[1]
+            zoomextent = (x_min, y_min, x_max, y_max)
+            #self.adaptzoom(zoomextent)
+
+    """def adaptzoom(self, zoomextent):
+        self.canvas.zoomToExtent(QgsRectangle(zoomextent))
+        self.canvas.refresh()
+        print "frozen canvas?", DispatchHeroDockWidget.canvas.isFrozen()"""
 
     def buildNetwork(self):
-        for layer in self.canvas.layers():
-            if layer.name() == 'roads':
-                self.network_layer = layer
-        for layer in self.canvas.layers():
-            if layer.name() == 'graph tie points':
-                self.sourcepoint_layer = layer
+        #the first time the network is built, the layers need to be found basing on their names
+        if self.init_names == False:
+            for layer in self.canvas.layers():
+                if layer.name() == 'roads':
+                    self.network_layer_original = layer
+            for layer in self.canvas.layers():
+                if layer.name() == 'roads copy':
+                    self.network_layer = layer
+            for layer in self.canvas.layers():
+                if layer.name() == 'graph tie points':
+                    self.sourcepoint_layer = layer
+        #each time the network is built, the open bridges need to be removed from the copy
+        if self.init_names == False:
+            self.deletelist_old = []
+            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
+                self.deletelist_old.append(feature.id())
+            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 2')):
+                self.deletelist_old.append(feature.id())
+            res = self.network_layer.dataProvider().deleteFeatures(self.deletelist_old)
+            print "deleted items", res
+        if self.init_names == True:
+            deletelist_new = []
+            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 1')):
+                if feature.id() in self.deletelist_old:
+                    res = self.network_layer.dataProvider().addFeatures(feature.id())
+                    if res == True:
+                        self.deletelist_old.remove(feature.id())
+                    print "re-added", feature
+            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
+                deletelist_new.append(feature.id())
+            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 2')):
+                deletelist_new.append(feature.id())
+            res = self.network_layer.dataProvider().deleteFeatures(deletelist_new)
+            print "deleted", res
+            self.deletelist_old = self.deletelist_old + deletelist_new
         if self.network_layer:
             # get the points to be used as origin and destination
             # in this case gets the centroid of the selected features
@@ -418,14 +472,15 @@ class MapTool(QgsMapTool):
                 if self.graph and self.tied_points:
                     text = "network is built for %s points" % len(self.tied_points)
             shortestdistance = float("inf")
-            if self.origin_init == False:
+            #here the closest tied_point to the firestation is identified
+            if self.init_names == False:
                 for point in self.tied_points:
                     sqrdist = (point[0]-self.firestation_coord[0])**2 + (point[1]-self.firestation_coord[1])**2
                     if sqrdist < shortestdistance:
                         shortestdistance = sqrdist
                         self.closestpoint_start = point
             self.origin_index = self.tied_points.index(self.closestpoint_start)
-            self.origin_init = True
+            self.init_names = True
         return
 
     def calculateRoute(self):
@@ -454,7 +509,6 @@ class MapTool(QgsMapTool):
                 self.x_diff = self.firestation_coord[0] - self.destination[0]
                 self.y_diff = self.firestation_coord[1] - self.destination[1]
                 self.eucl_distance = math.sqrt(self.x_diff ** 2 + self.y_diff ** 2)
-                print self.eucl_distance
                 if self.eucl_distance < 1000:
                     factor = 2
                 elif self.eucl_distance < 3000:
@@ -478,7 +532,6 @@ class MapTool(QgsMapTool):
                             if sqrdist < shortestdistance:
                                 shortestdistance = sqrdist
                                 via_point_coord = (crosspoint.attribute('X'), crosspoint.attribute('Y'))
-                                print "via_points_coord", via_point_coord
                     if via_point_coord:
                         lowestdiff = float("inf")
                         for point in self.tied_points:
@@ -500,7 +553,7 @@ class MapTool(QgsMapTool):
                     ptstoadd = []
                     for point in alt_path[display_indicator]:
                         ptstoadd.append(QgsPoint(point[0], point[1]))
-                #display the alternative route layers
+                #display the alternative route layers and adapt the zoom
                     if display_indicator == 2:
                         self.rubberBandPath2.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
                         self.rubberBandPath2.setColor(QColor(51, 102, 0))
