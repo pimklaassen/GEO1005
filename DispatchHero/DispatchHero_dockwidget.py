@@ -419,8 +419,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 else:
                     check.append(False)
 
-            print check, self.openingRoads, new
-
             if not all(check):
                 globvars.changes = True
             else:
