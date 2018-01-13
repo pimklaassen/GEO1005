@@ -23,73 +23,88 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="dataTab">
-     <attribute name="title">
-      <string>data</string>
-     </attribute>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QLabel" name="trucks">
-        <property name="text">
-         <string>Active trucks</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QListWidget" name="trucksList"/>
-      </item>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Set speed before starting (x times)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSpinBox" name="spinBox"/>
-      </item>
-      <item>
-       <widget class="QLabel" name="bridges">
-        <property name="text">
-         <string>Bridges Log</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QListWidget" name="bridgesList"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="importDataButton">
-        <property name="text">
-         <string>Import map</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="drawPolygonButton">
-        <property name="text">
-         <string>Draw polygon</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="startCounterButton">
-        <property name="text">
-         <string>Start</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="stopCounterButton">
-        <property name="text">
-         <string>Stop</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+    <attribute name="title">
+     <string>data</string>
+    </attribute>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="trucks">
+       <property name="text">
+        <string>Active trucks</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="trucksList"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Set speed before starting (x times)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBox"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="bridges">
+       <property name="text">
+        <string>Bridges Log</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="bridgesList"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="importDataButton">
+       <property name="text">
+        <string>Import map</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="drawPolygonButton">
+       <property name="text">
+        <string>Start/End polygon drawing</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="startCounterButton">
+       <property name="text">
+        <string>Start</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="stopCounterButton">
+       <property name="text">
+        <string>Stop</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
    <widget class="QWidget" name="Decisions">
     <attribute name="title">
      <string>Dispatcher</string>

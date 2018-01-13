@@ -103,8 +103,10 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         global Polygon
         if Polygon == False:
             Polygon = True
+            self.drawPolygonButton.isChecked(True)
         else:
             Polygon = False
+            self.drawPolygonButton.isChecked(False)
         global polygonlist
         polygonlist = []
 
