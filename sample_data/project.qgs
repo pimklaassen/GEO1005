@@ -25,10 +25,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>90917.47201945859706029</xmin>
-      <ymin>434370.59322002500994131</ymin>
-      <xmax>94956.09706652560271323</xmax>
-      <ymax>436776.09205871383892372</ymax>
+      <xmin>90467.88198091613594443</xmin>
+      <ymin>432699.04051262943539768</ymin>
+      <xmax>98545.13207505014725029</xmax>
+      <ymax>437510.03819000709336251</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -202,7 +202,7 @@
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;wvk_id&quot;" sortOrder="1">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;available&quot;" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="sid"/>
           <column width="-1" hidden="0" type="field" name="wvk_id"/>
