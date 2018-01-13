@@ -477,36 +477,15 @@ class MapTool(QgsMapTool):
                 if layer.name() == 'graph tie points':
                     self.sourcepoint_layer = layer
         #each time the network is built, the open bridges need to be removed from the copy and the bridges which closed added again
-        if self.init_names == False:
-            deletelist = []
-            self.deleted_list = dict()
-            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
-                deletelist.append(feature.id())
-                self.deleted_list[feature.id()] = feature
-            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 2')):
-                deletelist.append(feature.id())
-                self.deleted_list[feature.id()] = feature
-            res = self.network_layer.dataProvider().deleteFeatures(deletelist)
-            print "deleted items", res
-        if self.init_names == True:
-            deletelist = []
-            addlist = []
-            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 1')):
-                if feature.id() in self.deleted_list:
-                    addlist.append(feature)
-                    del self.deleted_list[feature.id()]
-            res = self.network_layer.dataProvider().addFeatures(addlist)
-            print "re-added", len(addlist), "features", res
-            if res == True:
-                self.deletelist_old = self.deletelist_old - addlist_new
-            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
-                deletelist.append(feature.id())
-                self.deleted_list[feature.id()] = feature
-            for feature in self.network_layer_original.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 2')):
-                deletelist.append(feature.id())
-                self.deleted_list[feature.id()] = feature
-            res = self.network_layer.dataProvider().deleteFeatures(deletelist)
-            print "deleted", len(deletelist), "features", res
+        list_to_reset = []
+        list_build = []
+        for feature in self.network_layer.getFeatures():
+            list_to_reset.append(feature.id())
+        res1 = self.network_layer.dataProvider().deleteFeatures(list_to_reset)
+        for feature in self.network_layer_original.getFeatures(
+                QgsFeatureRequest().setFilterExpression('"available" = 1')):
+            list_build.append(feature)
+        res2, added_points = self.network_layer.dataProvider().addFeatures(list_build)
         if self.network_layer:
             # get the points to be used as origin and destination
             # in this case gets the centroid of the selected features
@@ -605,7 +584,7 @@ class MapTool(QgsMapTool):
                 #display the alternative route layers and adapt the zoom
                     if display_indicator == 2:
                         self.rubberBandPath2.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                        self.rubberBandPath2.setColor(QColor(51, 102, 0))
+                        self.rubberBandPath2.setColor(QColor(51, 160, 0))
                         self.rubberBandPath2.setWidth(3)
                     if display_indicator == 3:
                         self.rubberBandPath3.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
