@@ -62,16 +62,12 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Speed</string>
+         <string>Set speed before starting (x times)</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSlider" name="horizontalSlider">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
+       <widget class="QSpinBox" name="spinBox"/>
       </item>
       <item>
        <widget class="QLabel" name="bridges">

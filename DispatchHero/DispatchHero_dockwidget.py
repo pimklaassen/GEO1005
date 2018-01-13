@@ -59,21 +59,27 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.canvas = self.iface.mapCanvas()
         self.openingRoads = []
         self.states = {}
-        self.speed = 10
+        self.speed = 1
 
         # set up GUI operation signals
         self.importDataButton.clicked.connect(self.importData)
         self.startCounterButton.clicked.connect(self.startCounter)
         self.stopCounterButton.clicked.connect(self.cancelCounter)
         self.drawPolygonButton.clicked.connect(self.drawPolygon)
-        self.horizontalSlider.valueChanged.connect(self.setSpeed)
+        self.spinBox.valueChanged.connect(self.setSpeed)
+        self.spinBox.setValue(3)
+        self.spinBox.setMaximum(20)
+        self.spinBox.setMinimum(0)
+
+        self.startCounterButton.setDisabled(True)
+        self.stopCounterButton.setDisabled(True)
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
 
     def setSpeed(self):
-        factor = self.horizontalSlider.value()
+        self.speed = 1 * self.spinBox.value()
 
     def drawPolygon(self, LayerPoint = (-1,-1)):
         global Polygon
@@ -102,7 +108,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             tr = attrs[2]
             self.states[br] = tr
         
-        #self.resetLayers()
+        self.resetLayers()
+        self.startCounterButton.setDisabled(False)
 
     def resetLayers(self):
         self.bridgesLayer.startEditing()
@@ -157,7 +164,11 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 self.roadsLayer.changeAttributeValue(road.id(), 1, 2)
             self.roadsLayer.commitChanges()
 
-        print pending_bridge, ' GOING TO OPEN FOR ', obj['name'], '. Speed: {}, Length: {}'.format(obj['speed'], obj['length'])
+        self.pendingList = []
+        self.pendingList.append(obj['name'])
+
+        log = '{} will open for {}'.format(pending_bridge, obj['name'])
+        self.trucksList.addItem(log)
 
     def showBridges(self, bridgeTime):
 
@@ -166,10 +177,10 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         bridge_time = bridgeTime[1]
 
         # creating query for the open bridges
-        query = """"id" = '{}'""".format(bridge_ids[0])
+        query_init = """"id" = '{}'""".format(bridge_ids[0])
         if len(bridge_ids) > 1:
             for b in bridge_ids[1:]:
-                query += """ or "id" = '{}'""".format(b)
+                query_init += """ or "id" = '{}'""".format(b)
 
         # adding the open bridges to the log
         for b in bridge_ids:
@@ -177,7 +188,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.bridgesList.addItem(log)
 
         # creating a selection of open bridges, and all bridges
-        selection = self.bridgesLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        selection = self.bridgesLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query_init))
         features = self.bridgesLayer.getFeatures()
 
         # start editting the layers
@@ -195,6 +206,34 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             road_selection = self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
             for road in road_selection:
                 self.roadsLayer.changeAttributeValue(road.id(), 1, 1)
+
+        # go through previous open roads, to detect change
+        new = []
+
+        for feature in selection:
+            sid = feature.attributes()[0]
+            new.append(sid)
+
+        check = []
+
+        if len(self.openingRoads) != len(new):
+            globvars.changes = True
+        else:
+            for sid_1, sid_2 in zip(self.openingRoads, new):
+                if sid_1 == int(sid_2):
+                    check.append(True)
+                else:
+                    check.append(False)
+
+            print check, self.openingRoads, new
+
+            if not all(check):
+                globvars.changes = True
+            else:
+                globvars.changes = False
+
+        # make new generator object
+        selection = self.bridgesLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query_init))
 
         # cleaning the list, for next open bridges
         self.openingRoads = []
@@ -222,8 +261,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.bridgesLayer.commitChanges()
         self.roadsLayer.commitChanges()
 
-        globvars.changes = True
-
     def startCounter(self):
         # prepare the thread of the timed even or long loop
         new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
@@ -249,6 +286,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # from here the timer is running in the background on a separate thread. user can continue working on QGIS.
         self.startCounterButton.setDisabled(True)
         self.stopCounterButton.setDisabled(False)
+        self.spinBox.setDisabled(True)
 
     def cancelCounter(self):
         # triggered if the user clicks the cancel button
@@ -277,6 +315,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.stopCounterButton.setDisabled(True)
         self.resetLayers()
         self.bridgesList.clear()
+        self.trucksList.clear()
         self.iface.messageBar().pushMessage("Info", "Simulation canceled", level=0, duration=8)
 
     def concludeCounter(self, result):
@@ -304,8 +343,10 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.timerThread = None
         self.startCounterButton.setDisabled(False)
         self.stopCounterButton.setDisabled(True)
+        self.spinBox.setDisabled(False)
         self.resetLayers()
         self.bridgesList.clear()
+        self.trucksList.clear()
         # do something with the results
         self.iface.messageBar().pushMessage("Info", "Simulation finished", level=0, duration=8)
 
@@ -590,7 +631,7 @@ class TimedEvent(QtCore.QThread):
         progress = 0
         recorded = []
         for bridgeTime in self.bridges:
-            jump = 20 
+            jump = 20 / self.parent.speed
             recorded.append(jump)
             
             self.displayBridges.emit(bridgeTime)
@@ -624,7 +665,8 @@ class TimedVesselEvent(QtCore.QThread):
         progress = 0
         recorded = []
         for vesselTime in self.vessels:
-            jump = vesselTime[1]
+            
+            jump = vesselTime[1] / self.parent.speed
             recorded.append(jump)
             self.displayVessels.emit(vesselTime)
 
