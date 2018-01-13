@@ -34,7 +34,7 @@ from qgis.networkanalysis import *
 from . import globvars
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'spatial_decision_dockwidget_base_extra.ui'))
+    os.path.dirname(__file__), 'DispatchHero_dockwidget_base.ui'))
 
 class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
@@ -61,15 +61,33 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.states = {}
         self.speed = 1
 
+        # setup Decisions interface
+        self.Add_message.clicked.connect(self.add_message_alert)
+
+        self.Route1.clicked.connect(self.select_route_1)
+        self.Route2.clicked.connect(self.select_route_2)
+        self.Route3.clicked.connect(self.select_route_3)
+
+        self.Add_truck.clicked.connect(self.add_truck_instance)
+        self.Delete_truck.clicked.connect(self.delete_truck_instance)
+
+        self.Auto_ON.clicked.connect(self.autoOn)
+        self.Auto_OFF.clicked.connect(self.autoOff)
+
+        self.Stop.clicked.connect(self.cancelSelection)
+
+        self.Help.clicked.connect(self.request_help)
+
         # set up GUI operation signals
         self.importDataButton.clicked.connect(self.importData)
+
+        self.drawPolygonButton.clicked.connect(self.drawPolygon)
+
         self.startCounterButton.clicked.connect(self.startCounter)
         self.stopCounterButton.clicked.connect(self.cancelCounter)
-        self.drawPolygonButton.clicked.connect(self.drawPolygon)
-        self.spinBox.valueChanged.connect(self.setSpeed)
-        self.spinBox.setValue(3)
         self.spinBox.setMaximum(20)
         self.spinBox.setMinimum(0)
+        self.spinBox.setValue(5)
 
         self.startCounterButton.setDisabled(True)
         self.stopCounterButton.setDisabled(True)
@@ -89,6 +107,182 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             Polygon = False
         global polygonlist
         polygonlist = []
+
+#################################################################################################################
+
+    def request_help(self):
+        self.Message_display.clear()
+        self.Message_display.addItem("----------------------------------")
+        self.Message_display.addItem("Station full")
+        self.Message_display.addItem("----------------------------------")
+
+    def autoOn(self):
+        self.Message_display.clear()
+        self.Message_display.addItem("----------------------------------")
+        self.Message_display.addItem("AutoDispatch ON")
+        self.Message_display.addItem("----------------------------------")
+
+    def autoOff(self):
+        self.Message_display.clear()
+        self.Message_display.addItem("----------------------------------")
+        self.Message_display.addItem("AutoDispatch OFF")
+        self.Message_display.addItem("----------------------------------")
+
+    def cancelSelection(self):
+        self.Message_display.clear()
+        car = self.Trucks_in_route.currentItem().text()
+        name = "car" + car + ".txt"
+        file = open(name, 'r')
+        with file:
+            for line in file:
+                self.Message_display.addItem(line)
+
+        file = open(name, 'a')
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        Truck = self.Trucks_in_route.currentItem().text()
+        self.Message_display.addItem(Truck)
+        file.write(Truck + "\n")
+        self.Message_display.addItem("Cancel route\n")
+        file.write("Cancel route\n")
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        self.In_station_list.addItem(Truck)
+        self.Trucks_in_route.takeItem(self.Trucks_in_route.currentRow())
+        pass
+
+    def addlist_routes(self):
+        self.Routes.addItem(self.Route_name.text())
+        self.Route_name.setText('')
+        self.Route_name.setFocus()
+        pass
+
+    def add_message_alert(self):
+        self.Message_display.clear()
+        car = self.Trucks_in_route.currentItem().text()
+        name = "car"+ car + ".txt"
+        file = open(name,'r')
+        with file:
+            for line in file:
+                self.Message_display.addItem(line)
+
+        file = open(name, 'a')
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        Truck = self.Trucks_in_route.currentItem().text()
+        self.Message_display.addItem(Truck)
+        file.write(Truck+"\n")
+        self.Message_display.addItem(self.Route_message.text())
+        file.write(self.Route_message.text()+ "\n")
+        self.Message_display.addItem("----------------------------------")
+        file.write("----------------------------------\n")
+        self.Route_message.setText('')
+        self.Route_message.setFocus()
+        file.close
+        pass
+
+    def select_route_1(self):
+        if self.Reassign.isChecked() == True:
+            self.Message_display.clear()
+            Truck = self.Trucks_in_route.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Reassigned route 1")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Reassigned route 1\n")
+            file.write("----------------------------------\n")
+        else:
+            self.Message_display.clear()
+            Truck = self.In_station_list.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Trucks_in_route.addItem(Truck)
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Follow route 1")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Follow route 1\n")
+            file.write("----------------------------------\n")
+            self.In_station_list.takeItem(self.In_station_list.currentRow())
+        pass
+
+    def select_route_2(self):
+        if self.Reassign.isChecked() == True:
+            self.Message_display.clear()
+            Truck = self.Trucks_in_route.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Reassigned route 2")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Reassigned route 2\n")
+            file.write("----------------------------------\n")
+        else:
+            self.Message_display.clear()
+            Truck = self.In_station_list.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Trucks_in_route.addItem(Truck)
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Follow route 2")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Follow route 2\n")
+            file.write("----------------------------------\n")
+            self.In_station_list.takeItem(self.In_station_list.currentRow())
+        pass
+
+    def select_route_3(self):
+        if self.Reassign.isChecked() == True:
+            self.Message_display.clear()
+            Truck = self.Trucks_in_route.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Reassigned route 3")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Reassigned route 3\n")
+            file.write("----------------------------------\n")
+        else:
+            self.Message_display.clear()
+            Truck = self.In_station_list.currentItem().text()
+            name = "car" + Truck + ".txt"
+            file = open(name, 'w')
+            self.Message_display.addItem("----------------------------------")
+            self.Trucks_in_route.addItem(Truck)
+            self.Message_display.addItem(Truck)
+            self.Message_display.addItem("Follow route 3")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            file.write(Truck + "\n")
+            file.write("Follow route 3\n")
+            file.write("----------------------------------\n")
+            self.In_station_list.takeItem(self.In_station_list.currentRow())
+        pass
+
+    def add_truck_instance(self):
+        self.In_station_list.addItem(self.Truck_text.text())
+        self.Truck_text.setText('')
+
+    def delete_truck_instance(self):
+        self.In_station_list.takeItem(self.In_station_list.currentRow())
+        pass
+
+###################################################################################################
 
     def importData(self, filename=''):
         new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
@@ -263,6 +457,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def startCounter(self):
         # prepare the thread of the timed even or long loop
+        self.setSpeed()
         new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
         fh = open(new_file, 'r')
         self.bridgesGenerator = uf.BridgeParser(fh)
