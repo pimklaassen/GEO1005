@@ -66,11 +66,14 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.startCounterButton.clicked.connect(self.startCounter)
         self.stopCounterButton.clicked.connect(self.cancelCounter)
         self.drawPolygonButton.clicked.connect(self.drawPolygon)
-
+        self.horizontalSlider.valueChanged.connect(self.setSpeed)
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
+
+    def setSpeed(self):
+        factor = self.horizontalSlider.value()
 
     def drawPolygon(self, LayerPoint = (-1,-1)):
         global Polygon
@@ -99,7 +102,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             tr = attrs[2]
             self.states[br] = tr
         
-        self.resetLayers()
+        #self.resetLayers()
 
     def resetLayers(self):
         self.bridgesLayer.startEditing()
@@ -587,8 +590,7 @@ class TimedEvent(QtCore.QThread):
         progress = 0
         recorded = []
         for bridgeTime in self.bridges:
-            factor = self.speed / 10.0
-            jump = 20 * factor
+            jump = 20 
             recorded.append(jump)
             
             self.displayBridges.emit(bridgeTime)
@@ -622,10 +624,8 @@ class TimedVesselEvent(QtCore.QThread):
         progress = 0
         recorded = []
         for vesselTime in self.vessels:
-            factor = self.speed / 10.0
-            jump = vesselTime[1] * factor
+            jump = vesselTime[1]
             recorded.append(jump)
-
             self.displayVessels.emit(vesselTime)
 
             time.sleep(jump)

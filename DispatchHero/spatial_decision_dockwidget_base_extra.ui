@@ -60,6 +60,20 @@
        <widget class="QListWidget" name="trucksList"/>
       </item>
       <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Speed</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="horizontalSlider">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="bridges">
         <property name="text">
          <string>Bridges Log</string>
