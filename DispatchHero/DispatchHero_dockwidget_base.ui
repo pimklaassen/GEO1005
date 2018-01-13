@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="dataTab">
     <attribute name="title">
@@ -136,7 +136,7 @@
         <item>
          <widget class="QPushButton" name="Add_message">
           <property name="text">
-           <string>Add</string>
+           <string>Add message</string>
           </property>
          </widget>
         </item>
@@ -234,7 +234,7 @@
        <x>240</x>
        <y>50</y>
        <width>93</width>
-       <height>28</height>
+       <height>41</height>
       </rect>
      </property>
      <property name="text">
@@ -247,7 +247,7 @@
        <x>150</x>
        <y>50</y>
        <width>93</width>
-       <height>28</height>
+       <height>41</height>
       </rect>
      </property>
      <property name="text">
@@ -266,31 +266,34 @@
      <layout class="QHBoxLayout" name="Stations">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>7</number>
+        </property>
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QPushButton" name="pushButton">
           <property name="text">
-           <string>Station 1</string>
+           <string>request assistance station1</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_4">
+         <widget class="QPushButton" name="pushButton_2">
           <property name="text">
-           <string>Station 2</string>
+           <string>request assistance station1</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QPushButton" name="pushButton_3">
           <property name="text">
-           <string>Station 3</string>
+           <string>request assistance station1</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QPushButton" name="pushButton_4">
           <property name="text">
-           <string>Station 4</string>
+           <string>request assistance station1</string>
           </property>
          </widget>
         </item>
@@ -333,43 +336,17 @@
       </item>
      </layout>
     </widget>
-    <widget class="QPushButton" name="Help">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>80</y>
-       <width>93</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Help</string>
-     </property>
-    </widget>
     <widget class="QRadioButton" name="Reassign">
      <property name="geometry">
       <rect>
        <x>200</x>
-       <y>120</y>
+       <y>110</y>
        <width>95</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
       <string>Reassign</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="Stop">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>20</y>
-       <width>93</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Stop</string>
      </property>
     </widget>
     <widget class="QWidget" name="horizontalLayoutWidget_2">
@@ -383,6 +360,13 @@
      </property>
      <layout class="QHBoxLayout" name="New_truck">
       <item>
+       <widget class="QPushButton" name="Delete_truck">
+        <property name="text">
+         <string>Remove Truck</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="Add_truck">
         <property name="text">
          <string>Add Truck</string>
@@ -390,14 +374,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="Delete_truck">
-        <property name="text">
-         <string>Delete Truck</string>
-        </property>
-       </widget>
+       <widget class="QLineEdit" name="Truck_text"/>
       </item>
       <item>
-       <widget class="QLineEdit" name="Truck_text"/>
+       <widget class="QPushButton" name="Stop">
+        <property name="text">
+         <string>Back to station</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
