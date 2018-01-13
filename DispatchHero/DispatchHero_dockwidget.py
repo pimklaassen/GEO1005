@@ -114,44 +114,17 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def autoOn(self):
         self.Message_display.clear()
-        car = self.Trucks_in_route.currentItem().text()
-        name = "car" + car + ".txt"
-        file = open(name, 'r')
-        with file:
-            for line in file:
-                self.Message_display.addItem(line)
-
-        file = open(name, 'a')
         self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
-        Truck = self.Trucks_in_route.currentItem().text()
-        self.Message_display.addItem(Truck)
-        file.write(Truck + "\n")
-        self.Message_display.addItem("Auto-dispatch active\n")
-        file.write("Auto-dispatch active\n")
+        self.Message_display.addItem("Autodispatch ON")
         self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
         pass
 
     def autoOff(self):
         self.Message_display.clear()
-        car = self.Trucks_in_route.currentItem().text()
-        name = "car" + car + ".txt"
-        file = open(name, 'r')
-        with file:
-            for line in file:
-                self.Message_display.addItem(line)
-
-        file = open(name, 'a')
         self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
-        Truck = self.Trucks_in_route.currentItem().text()
-        self.Message_display.addItem(Truck)
-        file.write(Truck + "\n")
-        self.Message_display.addItem("Auto-dispatch desactive\n")
-        file.write("Auto-dispatch desactive\n")
+        self.Message_display.addItem("Autodispatch OFF")
         self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
+        file.close
         pass
 
     def cancelSelection(self):
@@ -175,6 +148,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         file.write("----------------------------------\n")
         self.In_station_list.addItem(Truck)
         self.Trucks_in_route.takeItem(self.Trucks_in_route.currentRow())
+        file.close
         pass
 
     def addlist_routes(self):
@@ -221,6 +195,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write(Truck + "\n")
             file.write("Reassigned route 1\n")
             file.write("----------------------------------\n")
+            file.close
         else:
             self.Message_display.clear()
             Truck = self.In_station_list.currentItem().text()
@@ -236,6 +211,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write("Follow route 1\n")
             file.write("----------------------------------\n")
             self.In_station_list.takeItem(self.In_station_list.currentRow())
+            file.close
         pass
 
     def select_route_2(self):
@@ -252,6 +228,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write(Truck + "\n")
             file.write("Reassigned route 2\n")
             file.write("----------------------------------\n")
+            file.close
         else:
             self.Message_display.clear()
             Truck = self.In_station_list.currentItem().text()
@@ -267,6 +244,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write("Follow route 2\n")
             file.write("----------------------------------\n")
             self.In_station_list.takeItem(self.In_station_list.currentRow())
+            file.close
         pass
 
     def select_route_3(self):
@@ -283,6 +261,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write(Truck + "\n")
             file.write("Reassigned route 3\n")
             file.write("----------------------------------\n")
+            file.close
         else:
             self.Message_display.clear()
             Truck = self.In_station_list.currentItem().text()
@@ -298,6 +277,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write("Follow route 3\n")
             file.write("----------------------------------\n")
             self.In_station_list.takeItem(self.In_station_list.currentRow())
+            file.close
         pass
 
     def add_truck_instance(self):
