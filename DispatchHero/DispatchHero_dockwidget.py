@@ -59,6 +59,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.canvas = self.iface.mapCanvas()
         self.openingRoads = []
         self.states = {}
+        self.speed = 10
 
         # set up GUI operation signals
         self.importDataButton.clicked.connect(self.importData)
@@ -92,16 +93,13 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             elif layer.name() == u'roads':
                 self.roadsLayer = layer
 
-        self.bridgesLayer.startEditing()
         for br in self.bridgesLayer.getFeatures():
             attrs = br.attributes()
-            
-            self.bridgesLayer.changeAttributeValue(br.id(), 2, 'closed')
-            
             br = attrs[1]
             tr = attrs[2]
             self.states[br] = tr
-        self.bridgesLayer.commitChanges()
+        
+        self.resetLayers()
 
     def resetLayers(self):
         self.bridgesLayer.startEditing()
@@ -589,7 +587,8 @@ class TimedEvent(QtCore.QThread):
         progress = 0
         recorded = []
         for bridgeTime in self.bridges:
-            jump = 20
+            factor = self.speed / 10.0
+            jump = 20 * factor
             recorded.append(jump)
             
             self.displayBridges.emit(bridgeTime)
@@ -623,7 +622,8 @@ class TimedVesselEvent(QtCore.QThread):
         progress = 0
         recorded = []
         for vesselTime in self.vessels:
-            jump = vesselTime[1]
+            factor = self.speed / 10.0
+            jump = vesselTime[1] * factor
             recorded.append(jump)
 
             self.displayVessels.emit(vesselTime)
