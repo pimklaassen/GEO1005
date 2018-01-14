@@ -445,17 +445,87 @@
          <widget class="QListWidget" name="In_station_list">
           <item>
            <property name="text">
-            <string>0001_coche_A_L</string>
+            <string>RV_Rescue vehicle_light_0001</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>0002_coche_B_M</string>
+            <string>RV_Rescue vehicle_light_0002</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>0003_coche_T_H</string>
+            <string>C_CARP_heavy_0003</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>C_CARP_0004</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>C_CARP_0006</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CV_L_Combination vehicle_light_0007</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CV_M_Combination vehicle_medium_0008</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RV_Rescue vehicle_0009</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RV_Rescue vehicle_0010</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>AP_M_Aerial platform_0011</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>AP_H_Aerial platform_0012</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PV_M_Pump vehicle_medium_0013</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PV_H_Pump vehicle_heavy_0014</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WB_Water foam boom_0015</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WB_Water foam boom_0016</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WV_Watertank vehicle_0017</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WV_Watertank vehicle_0018</string>
            </property>
           </item>
          </widget>

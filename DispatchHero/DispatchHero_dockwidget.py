@@ -77,10 +77,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         self.Stop.clicked.connect(self.cancelSelection)
 
-        self.help1.clicked.connect(self.request_help, 1)
-        self.help2.clicked.connect(self.request_help, 2)
-        self.help3.clicked.connect(self.request_help, 3)
-        self.help4.clicked.connect(self.request_help, 4)
+        self.Help.clicked.connect(self.request_help)
 
         # set up GUI operation signals
         self.importDataButton.clicked.connect(self.importData)
@@ -124,11 +121,30 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
 #################################################################################################################
 
-    def request_help(self, station_id):
+    def request_help(self):
         self.Message_display.clear()
         self.Message_display.addItem("----------------------------------")
-        self.Message_display.addItem("Requested help from station"+str(station_id))
+        self.Message_display.addItem("Requested help from station")
         self.Message_display.addItem("----------------------------------")
+        if self.Station1.isChecked() == True and self.Station_1_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 1")
+            self.Message_display.addItem("----------------------------------")
+        elif self.Station2.isChecked() == True and self.Station_2_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 2")
+            self.Message_display.addItem("----------------------------------")
+        elif self.Station3.isChecked() == True and self.Station_3_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 3")
+            self.Message_display.addItem("----------------------------------")
+        elif self.Station4.isChecked() == True and self.Station_4_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 4")
+            self.Message_display.addItem("----------------------------------")
+        else:
+            self.Message_display.addItem("Station not available")
+            self.Message_display.addItem("----------------------------------")
 
     def autoOn(self):
         self.Message_display.clear()
