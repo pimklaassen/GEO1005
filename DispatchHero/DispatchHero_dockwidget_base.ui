@@ -270,30 +270,37 @@
          <number>7</number>
         </property>
         <item>
-         <widget class="QRadioButton" name="Help1">
+         <widget class="QRadioButton" name="Station1">
           <property name="text">
-           <string>request help - station1</string>
+           <string>station1</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="Help2">
+         <widget class="QRadioButton" name="Station2">
           <property name="text">
-           <string>request help - station2</string>
+           <string>station2</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="Help3">
+         <widget class="QRadioButton" name="Station3">
           <property name="text">
-           <string>request help - station3</string>
+           <string>station3</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="Help4">
+         <widget class="QRadioButton" name="Station4">
           <property name="text">
-           <string>request help - station4</string>
+           <string>station4</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="Help">
+          <property name="text">
+           <string>request help</string>
           </property>
          </widget>
         </item>
@@ -301,6 +308,9 @@
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QProgressBar" name="Station_1_status">
           <property name="value">
@@ -331,6 +341,22 @@
            <number>100</number>
           </property>
          </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>30</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
