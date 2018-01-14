@@ -270,28 +270,28 @@
          <number>7</number>
         </property>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="help1">
           <property name="text">
            <string>request assistance station1</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="help2">
           <property name="text">
            <string>request assistance station1</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="help3">
           <property name="text">
            <string>request assistance station1</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="help4">
           <property name="text">
            <string>request assistance station1</string>
           </property>
