@@ -91,9 +91,6 @@
       </item>
      </layout>
     </widget>
-    <zorder>verticalLayoutWidget_6</zorder>
-    <zorder>verticalLayoutWidget_6</zorder>
-    <zorder>verticalLayoutWidget_5</zorder>
    </widget>
    <widget class="QWidget" name="Decisions">
     <attribute name="title">
@@ -249,36 +246,36 @@
       <rect>
        <x>350</x>
        <y>0</y>
-       <width>302</width>
+       <width>301</width>
        <height>161</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="Stations">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QRadioButton" name="Station1">
           <property name="text">
            <string>Station 1</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_4">
+         <widget class="QRadioButton" name="Station2">
           <property name="text">
            <string>Station 2</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QRadioButton" name="Station3">
           <property name="text">
            <string>Station 3</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QRadioButton" name="Station4">
           <property name="text">
            <string>Station 4</string>
           </property>
@@ -475,6 +472,8 @@
     </widget>
    </widget>
   </widget>
+  <zorder>Tab</zorder>
+  <zorder>horizontalLayoutWidget</zorder>
  </widget>
  <resources/>
  <connections/>

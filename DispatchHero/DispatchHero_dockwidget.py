@@ -110,7 +110,25 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.Message_display.clear()
         self.Message_display.addItem("----------------------------------")
         self.Message_display.addItem("Station full")
-        self.Message_display.addItem("----------------------------------")
+        if self.Station1.isChecked() == True and self.Station_1_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 1")
+            self.Message_display.addItem("----------------------------------")
+        elif self.Station2.isChecked() == True and self.Station_2_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 2")
+            self.Message_display.addItem("----------------------------------")
+        elif self.Station3.isChecked() == True and self.Station_3_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 3")
+            self.Message_display.addItem("----------------------------------")
+        elif self.Station4.isChecked() == True and self.Station_4_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 4")
+            self.Message_display.addItem("----------------------------------")
+        else:
+            self.Message_display.addItem("Station not available")
+            self.Message_display.addItem("----------------------------------")
 
     def autoOn(self):
         self.Message_display.clear()
