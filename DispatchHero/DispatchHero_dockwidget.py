@@ -62,6 +62,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.states = {}
         self.speed = 1
         self.dataLoaded = 0
+        self.bridgesLayer = None
+        self.roadsLayer = None
 
         # setup Decisions interface
         self.Add_message.clicked.connect(self.add_message_alert)
@@ -369,7 +371,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def importData(self, filename=''):
         new_file = None
         try:
-            new_file = QtGui.QFileDialog.getOpenFileName(self, "", self.projectPath)
+            new_file = QtGui.QFileDialog.getOpenFileName(self, "", self.projectPath, '(*.qgs)')
             if not new_file:
                 return
             path_name = '/'.join(unicode(new_file).split('/')[:-1])
@@ -384,7 +386,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 f.write(to_write)
                 f.close()
         except:
-            new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+            new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)), '(*.qgs)')
             path_name = '/'.join(unicode(new_file).split('/')[:-1])
             f = open('path_cache.txt', 'w')
             f.write(path_name + '\r\n')
@@ -398,18 +400,21 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 elif layer.name() == u'roads':
                     self.roadsLayer = layer
 
-            for br in self.bridgesLayer.getFeatures():
-                attrs = br.attributes()
-                br = attrs[1]
-                tr = attrs[2]
-                self.states[br] = tr
-            
-            self.resetLayers()
+            try:
+                for br in self.bridgesLayer.getFeatures():
+                    attrs = br.attributes()
+                    br = attrs[1]
+                    tr = attrs[2]
+                    self.states[br] = tr
+                
+                self.resetLayers()
 
-            self.iface.messageBar().pushMessage("Info", "Project imported", level=0, duration=2)
+                self.iface.messageBar().pushMessage("Info", "Project imported", level=0, duration=2)
 
-            self.importDataButton.setDisabled(True)
-            self.importBridgesButton.setDisabled(False)
+                self.importDataButton.setDisabled(True)
+                self.importBridgesButton.setDisabled(False)
+            except:
+                self.iface.messageBar().pushMessage("Info", "Project doesn't have bridges/roads layer!", level=QgsMessageBar.WARNING, duration=3)
 
     def importBridgesData(self, filename=''):
         new_file = None
@@ -436,13 +441,19 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         if not new_file:
             return
-        self.fh_1 = open(new_file, 'r')
+
+        check = open(new_file, 'r')
+
+        try:
+            self.bridgesGenerator = uf.BridgeParser(check)
+            self.bridgesGenerator.parse()
+        except:
+            self.iface.messageBar().pushMessage("Info", "Wrong file type selected!", level=QgsMessageBar.WARNING, duration=3)
+            return
+
         self.dataLoaded += 1
         if self.dataLoaded == 2:
             self.startCounterButton.setDisabled(False)
-
-        self.bridgesGenerator = uf.BridgeParser(self.fh_1)
-        self.bridgesGenerator.parse()
 
         self.iface.messageBar().pushMessage("Info", "Bridge opening data imported", level=0, duration=2)
 
@@ -474,13 +485,19 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         if not new_file:
             return
-        self.fh_2 = open(new_file, 'r')
+
+        check = open(new_file, 'r')
+
+        try:
+            self.vesselGenerator = uf.vesselParser(check)
+            self.vesselGenerator.parse()
+        except:
+            self.iface.messageBar().pushMessage("Info", "Wrong file type selected!", level=QgsMessageBar.WARNING, duration=3)
+            return
+
         self.dataLoaded += 1
         if self.dataLoaded == 2:
             self.startCounterButton.setDisabled(False)
-
-        self.vesselGenerator = uf.vesselParser(self.fh_2)
-        self.vesselGenerator.parse()
 
         self.iface.messageBar().pushMessage("Info", "Vessel stream imported", level=0, duration=2)
 
