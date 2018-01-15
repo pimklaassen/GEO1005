@@ -788,7 +788,10 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def cancelCounter(self):
         # triggered if the user clicks the cancel button
-        self.parent.MapTool.clear()
+        try:
+            self.parent.MapTool.clear()
+        except:
+            pass
         # resetting the roads to available again        
         self.roadsLayer.startEditing()
         for feature in self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
@@ -836,7 +839,10 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def concludeCounter(self, result):
         # clean up timer thread stuff
-
+        try:
+            self.parent.MapTool.clear()
+        except:
+            pass
         # resetting the roads to available again
         self.roadsLayer.startEditing()
         for feature in self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
