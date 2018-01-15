@@ -905,7 +905,7 @@ class MapTool(QgsMapTool):
             zoomcheck = self.rezoom(zoomextent)
 
             # once the graph is initialized, keep record and activate the dispatching tab
-            if self.graph and self.tied_points and zoomcheck == True
+            if self.graph and self.tied_points and zoomcheck == True:
                 if self.init_graph == False:
                     self.iface.messageBar().pushMessage("Info",
                                                         "Now select truck (in list) and assign route (using coloured buttons)",
