@@ -62,6 +62,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.states = {}
         self.speed = 1
         self.dataLoaded = 0
+        self.bridgesLayer = None
+        self.roadsLayer = None
 
         # setup Decisions interface
         self.Add_message.clicked.connect(self.add_message_alert)
@@ -104,7 +106,15 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def closeEvent(self, event):
 
         try:
-            self.cancelCounter()
+            self.dataLoaded = 0
+            self.timerThread.stop()
+            self.vesselThread.stop()
+            self.Trucks_in_route.clear()
+            self.bridgesList.clear()
+            self.vesselsList.clear()
+            self.resetLayers()
+            self.startCounterButton.setDisabled(False)
+            self.stopCounterButton.setDisabled(True)
         except:
             pass
 
@@ -122,8 +132,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         else:
             Polygon = False
             self.drawPolygonButton.isChecked()
-            self.iface.messageBar().pushMessage("Info", "Click on the map to select destination",
-                                                level=0, duration=3)
         global polygonlist
         polygonlist = []
 
@@ -230,11 +238,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         pass
 
     def select_route_1(self):
-        if globvars.clicked_canvas == False:
-            self.iface.messageBar().pushMessage("Warning",
-                                                "Choose a destination by clicking on map first!",
-                                                level=QgsMessageBar.WARNING, duration=2)
-            return
         if self.Reassign.isChecked() == True:
             if not self.Trucks_in_route.currentItem():
                 self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
@@ -276,14 +279,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write("----------------------------------\n")
             self.In_station_list.takeItem(self.In_station_list.currentRow())
         self.zoomback()
-        globvars.clicked_canvas = False
 
     def select_route_2(self):
-        if globvars.clicked_canvas == False:
-            self.iface.messageBar().pushMessage("Warning",
-                                                "Choose a destination by clicking on map first!",
-                                                level=QgsMessageBar.WARNING, duration=2)
-            return
         if self.Reassign.isChecked() == True:
             if not self.Trucks_in_route.currentItem():
                 self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
@@ -325,14 +322,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write("----------------------------------\n")
             self.In_station_list.takeItem(self.In_station_list.currentRow())
         self.zoomback()
-        globvars.clicked_canvas = False
 
     def select_route_3(self):
-        if globvars.clicked_canvas == False:
-            self.iface.messageBar().pushMessage("Warning",
-                                                "Choose a destination by clicking on map first!",
-                                                level=QgsMessageBar.WARNING, duration=2)
-            return
         if self.Reassign.isChecked() == True:
             if not self.Trucks_in_route.currentItem():
                 self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
@@ -374,7 +365,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write("----------------------------------\n")
             self.In_station_list.takeItem(self.In_station_list.currentRow())
         self.zoomback()
-        globvars.clicked_canvas = False
 
     # def add_truck_instance(self):
     #     self.In_station_list.addItem(self.Truck_text.text())
@@ -389,7 +379,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def importData(self, filename=''):
         new_file = None
         try:
-            new_file = QtGui.QFileDialog.getOpenFileName(self, "", self.projectPath)
+            new_file = QtGui.QFileDialog.getOpenFileName(self, "", self.projectPath, '(*.qgs)')
             if not new_file:
                 return
             path_name = '/'.join(unicode(new_file).split('/')[:-1])
@@ -404,7 +394,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 f.write(to_write)
                 f.close()
         except:
-            new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+            new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)), '(*.qgs)')
             path_name = '/'.join(unicode(new_file).split('/')[:-1])
             f = open('path_cache.txt', 'w')
             f.write(path_name + '\r\n')
@@ -418,18 +408,21 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 elif layer.name() == u'roads':
                     self.roadsLayer = layer
 
-            for br in self.bridgesLayer.getFeatures():
-                attrs = br.attributes()
-                br = attrs[1]
-                tr = attrs[2]
-                self.states[br] = tr
+            try:
+                for br in self.bridgesLayer.getFeatures():
+                    attrs = br.attributes()
+                    br = attrs[1]
+                    tr = attrs[2]
+                    self.states[br] = tr
+                
+                self.resetLayers()
 
-            self.resetLayers()
+                self.iface.messageBar().pushMessage("Info", "Project imported", level=0, duration=2)
 
-            self.iface.messageBar().pushMessage("Info", "Project imported", level=0, duration=2)
-
-            self.importDataButton.setDisabled(True)
-            self.importBridgesButton.setDisabled(False)
+                self.importDataButton.setDisabled(True)
+                self.importBridgesButton.setDisabled(False)
+            except:
+                self.iface.messageBar().pushMessage("Info", "Project doesn't have bridges/roads layer!", level=QgsMessageBar.WARNING, duration=3)
 
     def importBridgesData(self, filename=''):
         new_file = None
@@ -456,13 +449,19 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         if not new_file:
             return
-        self.fh_1 = open(new_file, 'r')
+
+        check = open(new_file, 'r')
+
+        try:
+            self.bridgesGenerator = uf.BridgeParser(check)
+            self.bridgesGenerator.parse()
+        except:
+            self.iface.messageBar().pushMessage("Info", "Wrong file type selected!", level=QgsMessageBar.WARNING, duration=3)
+            return
+
         self.dataLoaded += 1
         if self.dataLoaded == 2:
             self.startCounterButton.setDisabled(False)
-
-        self.bridgesGenerator = uf.BridgeParser(self.fh_1)
-        self.bridgesGenerator.parse()
 
         self.iface.messageBar().pushMessage("Info", "Bridge opening data imported", level=0, duration=2)
 
@@ -494,13 +493,19 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         if not new_file:
             return
-        self.fh_2 = open(new_file, 'r')
+
+        check = open(new_file, 'r')
+
+        try:
+            self.vesselGenerator = uf.vesselParser(check)
+            self.vesselGenerator.parse()
+        except:
+            self.iface.messageBar().pushMessage("Info", "Wrong file type selected!", level=QgsMessageBar.WARNING, duration=3)
+            return
+
         self.dataLoaded += 1
         if self.dataLoaded == 2:
             self.startCounterButton.setDisabled(False)
-
-        self.vesselGenerator = uf.vesselParser(self.fh_2)
-        self.vesselGenerator.parse()
 
         self.iface.messageBar().pushMessage("Info", "Vessel stream imported", level=0, duration=2)
 
@@ -695,12 +700,10 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         self.analysisTab.setDisabled(False)
         self.sampleWidgets.setCurrentIndex(1)
-        self.iface.messageBar().pushMessage("Info", "Start by drawing the calamity zone",
-                                            level=0, duration=3)
 
     def cancelCounter(self):
         # triggered if the user clicks the cancel button
-
+        
         # resetting the roads to available again
         self.roadsLayer.startEditing()
         for feature in self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
@@ -782,7 +785,8 @@ class MapTool(QgsMapTool):
         self.graph = QgsGraph()
         self.tied_points = []
         self.firestation_coord = (92619.8,436539)
-        self.init_graph = False
+        globvars.changes = True
+        self.init_names = False
         #clean the canvas - !!! to be fixed !!!
         print 'initiated maptool'
 
@@ -851,7 +855,7 @@ class MapTool(QgsMapTool):
             self.destination = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
 
             #shortest path algorythm
-            if globvars.changes == True or self.init_graph == False:
+            if globvars.changes == True:
                 print "changes detected, rebuilds network"
                 globvars.changes = False
                 self.buildNetwork()
@@ -873,18 +877,11 @@ class MapTool(QgsMapTool):
                 if coord[1] < y_min:
                     y_min = coord[1]
             zoomextent = QgsRectangle(float(x_min), float(y_min), float(x_max), y_max)
-            zoomcheck  = self.rezoom(zoomextent)
-
-            # once the graph is initialized, keep record and activate the dispatching tab
-            if self.graph and self.tied_points and zoomcheck == True:
-                self.init_graph = True
-                globvars.clicked_canvas = True
-                self.iface.messageBar().pushMessage("Info", "Now select truck (in list) and assign route (using coloured buttons)",
-                                                        level=0, duration=3)
+            self.rezoom(zoomextent)
 
     def buildNetwork(self):
         #the first time the network is built, the layers need to be found basing on their names
-        if self.init_graph == False:
+        if self.init_names == False:
             for layer in self.canvas.layers():
                 if layer.name() == 'roads':
                     self.network_layer_original = layer
@@ -919,13 +916,14 @@ class MapTool(QgsMapTool):
                     text = "network is built for %s points" % len(self.tied_points)
             shortestdistance = float("inf")
             #here the closest tied_point to the firestation is identified
-            if self.init_graph == False:
+            if self.init_names == False:
                 for point in self.tied_points:
                     sqrdist = (point[0]-self.firestation_coord[0])**2 + (point[1]-self.firestation_coord[1])**2
                     if sqrdist < shortestdistance:
                         shortestdistance = sqrdist
                         self.closestpoint_start = point
             self.origin_index = self.tied_points.index(self.closestpoint_start)
+            self.init_names = True
         return
 
     def calculateRoute(self):
@@ -1014,7 +1012,6 @@ class MapTool(QgsMapTool):
         globvars.dispatchzoom = self.canvas.extent()
         self.canvas.zoomToFeatureExtent(zoomextent)
         self.canvas.refresh()
-        return True
 
 class TimedEvent(QtCore.QThread):
     timerFinished = QtCore.pyqtSignal(list)
