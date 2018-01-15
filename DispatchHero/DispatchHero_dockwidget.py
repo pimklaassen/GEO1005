@@ -92,6 +92,14 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.importBridgesButton.setDisabled(True)
         self.importVesselsButton.setDisabled(True)
         self.analysisTab.setDisabled(True)
+        try:
+            f = open('path_cache.txt', 'r')
+            path_names = f.readlines()
+            self.projectPath = path_names[0].strip()
+            self.bridgesPath = path_names[1].strip()
+            self.vesselsPath = path_names[2].strip()
+        except:
+            pass
 
     def closeEvent(self, event):
 
@@ -359,35 +367,48 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 ###################################################################################################
 
     def importData(self, filename=''):
-        # try:
-        #     f = open('cache.txt', 'r')
-
-        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+        new_file = None
+        try:
+            new_file = QtGui.QFileDialog.getOpenFileName(self, "", self.projectPath)
+            path_name = '/'.join(unicode(new_file).split('/')[:-1])
+        except:
+            new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+            path_name = '/'.join(unicode(new_file).split('/')[:-1])
+            f = open('path_cache.txt', 'w')
+            f.write(path_name + '\r\n')
         if new_file:
             self.iface.addProject(unicode(new_file))
 
-        # assigning the layer with roadnetwork
-        for layer in self.iface.legendInterface().layers():
-            if layer.name() == u'bridges':
-                self.bridgesLayer = layer
-            elif layer.name() == u'roads':
-                self.roadsLayer = layer
+            # assigning the layer with roadnetwork
+            for layer in self.iface.legendInterface().layers():
+                if layer.name() == u'bridges':
+                    self.bridgesLayer = layer
+                elif layer.name() == u'roads':
+                    self.roadsLayer = layer
 
-        for br in self.bridgesLayer.getFeatures():
-            attrs = br.attributes()
-            br = attrs[1]
-            tr = attrs[2]
-            self.states[br] = tr
-        
-        self.resetLayers()
+            for br in self.bridgesLayer.getFeatures():
+                attrs = br.attributes()
+                br = attrs[1]
+                tr = attrs[2]
+                self.states[br] = tr
+            
+            self.resetLayers()
 
-        self.iface.messageBar().pushMessage("Info", "Project imported", level=0, duration=2)
+            self.iface.messageBar().pushMessage("Info", "Project imported", level=0, duration=2)
 
-        self.importDataButton.setDisabled(True)
-        self.importBridgesButton.setDisabled(False)
+            self.importDataButton.setDisabled(True)
+            self.importBridgesButton.setDisabled(False)
 
     def importBridgesData(self, filename=''):
-        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+        new_file = None
+        try:
+            new_file = QtGui.QFileDialog.getOpenFileName(self, "", self.bridgesPath)
+        except:
+            new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+            path_name = '/'.join(unicode(new_file).split('/')[:-1])
+            f = open('path_cache.txt', 'a')
+            f.write(path_name + '\r\n')
+
         if not new_file:
             return
         self.fh_1 = open(new_file, 'r')
@@ -404,7 +425,15 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.importVesselsButton.setDisabled(False)
 
     def importVesselsData(self, filename=''):
-        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+        new_file = None
+        try:
+            new_file = QtGui.QFileDialog.getOpenFileName(self, "", self.vesselsPath)
+        except:
+            new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+            path_name = '/'.join(unicode(new_file).split('/')[:-1])
+            f = open('path_cache.txt', 'a')
+            f.write(path_name + '\r\n')
+
         if not new_file:
             return
         self.fh_2 = open(new_file, 'r')
