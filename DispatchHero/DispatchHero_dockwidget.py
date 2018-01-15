@@ -370,7 +370,19 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         new_file = None
         try:
             new_file = QtGui.QFileDialog.getOpenFileName(self, "", self.projectPath)
+            if not new_file:
+                return
             path_name = '/'.join(unicode(new_file).split('/')[:-1])
+            if path_name != self.projectPath:
+                self.projectPath = path_name
+                f = open('path_cache.txt', 'r')
+                to_write = f.readlines()
+                f.close()
+                to_write[2] = path_name + '\r\n'
+                to_write = ''.join(to_write).strip()
+                f = open('path_cache.txt', 'w')
+                f.write(to_write)
+                f.close()
         except:
             new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
             path_name = '/'.join(unicode(new_file).split('/')[:-1])
@@ -403,6 +415,19 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         new_file = None
         try:
             new_file = QtGui.QFileDialog.getOpenFileName(self, "", self.bridgesPath)
+            if not new_file:
+                return
+            path_name = '/'.join(unicode(new_file).split('/')[:-1])
+            if path_name != self.bridgesPath:
+                self.bridgesPath = path_name
+                f = open('path_cache.txt', 'r')
+                to_write = f.readlines()
+                f.close()
+                to_write[2] = path_name + '\r\n'
+                to_write = ''.join(to_write).strip()
+                f = open('path_cache.txt', 'w')
+                f.write(to_write)
+                f.close()
         except:
             new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
             path_name = '/'.join(unicode(new_file).split('/')[:-1])
@@ -428,6 +453,19 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         new_file = None
         try:
             new_file = QtGui.QFileDialog.getOpenFileName(self, "", self.vesselsPath)
+            if not new_file:
+                return
+            path_name = '/'.join(unicode(new_file).split('/')[:-1])
+            if path_name != self.vesselsPath:
+                self.vesselsPath = path_name
+                f = open('path_cache.txt', 'r')
+                to_write = f.readlines()
+                f.close()
+                to_write[2] = path_name + '\r\n'
+                to_write = ''.join(to_write).strip()
+                f = open('path_cache.txt', 'w')
+                f.write(to_write)
+                f.close()
         except:
             new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
             path_name = '/'.join(unicode(new_file).split('/')[:-1])
