@@ -518,7 +518,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.startCounterButton.setDisabled(True)
         self.stopCounterButton.setDisabled(False)
         self.spinBox.setDisabled(True)
-        self.sampleWidgets.setCurrentIndex(1)
 
         self.importBridgesButton.setDisabled(True)
         self.importVesselsButton.setDisabled(True)

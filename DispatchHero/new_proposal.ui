@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>850</height>
+    <width>600</width>
+    <height>807</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
-    <width>400</width>
+    <width>600</width>
     <height>850</height>
    </size>
   </property>
@@ -25,8 +25,8 @@
      <rect>
       <x>12</x>
       <y>6</y>
-      <width>381</width>
-      <height>800</height>
+      <width>581</width>
+      <height>761</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -96,22 +96,44 @@
        </layout>
       </item>
       <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
+       <widget class="QLabel" name="label_2">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
+        <property name="text">
+         <string>Opening bridges</string>
         </property>
-       </spacer>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListWidget" name="bridgesList"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Approaching vessels</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListWidget" name="vesselsList"/>
       </item>
       <item>
        <widget class="QPushButton" name="drawPolygonButton">
         <property name="text">
-         <string>Draw Polygon</string>
+         <string>Start/End polygon drawing</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -140,6 +162,12 @@
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>Set speed before starting:</string>
           </property>
@@ -153,160 +181,329 @@
      <attribute name="title">
       <string>dispatchment</string>
      </attribute>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>Choose available route</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="Route1">
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(100, 175, 29); color: white;</string>
-        </property>
-        <property name="text">
-         <string>Route 1</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="Route2">
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(45, 96, 163); color: white;</string>
-        </property>
-        <property name="text">
-         <string>Route 2</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="Route3">
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(247, 165, 51); color: white;</string>
-        </property>
-        <property name="text">
-         <string>Route 3</string>
-        </property>
-       </widget>
-      </item>
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QGridLayout" name="gridLayout_2">
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_8">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Choose available route</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QRadioButton" name="Station3">
+            <property name="text">
+             <string>station3</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QProgressBar" name="Station_3_status">
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>7</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
         <item row="1" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QRadioButton" name="Station1">
+            <property name="text">
+             <string>station1</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QProgressBar" name="Station_1_status">
+            <property name="value">
+             <number>25</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="4" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QRadioButton" name="Station4">
+            <property name="text">
+             <string>station4</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QProgressBar" name="Station_4_status">
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <widget class="QPushButton" name="Route1">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(100, 175, 29); color: white;</string>
+          </property>
+          <property name="text">
+           <string>Route 1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QPushButton" name="Route2">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(45, 96, 163); color: white;</string>
+          </property>
+          <property name="text">
+           <string>Route 2</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QRadioButton" name="Station2">
+            <property name="text">
+             <string>station2</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QProgressBar" name="Station_2_status">
+            <property name="value">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="6" column="1">
          <widget class="QPushButton" name="Help">
           <property name="text">
-           <string>Help</string>
+           <string>request help</string>
           </property>
          </widget>
         </item>
         <item row="4" column="0">
+         <widget class="QPushButton" name="Route3">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(247, 165, 51); color: white;</string>
+          </property>
+          <property name="text">
+           <string>Route 3</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0">
          <widget class="QLabel" name="label_5">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>Trucks in station</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
-         <widget class="QListWidget" name="Trucks_in_route"/>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Trucks in route</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="Auto_OFF">
-          <property name="text">
-           <string>Auto Off</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Opening bridges</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="Stop">
-          <property name="text">
-           <string>Stop</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QListWidget" name="vesselsList"/>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Approaching vessels</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QListWidget" name="In_station_list"/>
-        </item>
-        <item row="3" column="0">
-         <widget class="QListWidget" name="bridgesList"/>
-        </item>
-        <item row="0" column="0">
-         <widget class="QPushButton" name="Auto_ON">
-          <property name="text">
-           <string>Auto On</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QRadioButton" name="Reassign">
-          <property name="text">
-           <string>Reassign</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1">
+        <item row="12" column="1">
          <widget class="QPushButton" name="Delete_truck">
           <property name="text">
-           <string>Delete Truck</string>
+           <string>Remove Truck</string>
           </property>
          </widget>
         </item>
-        <item row="8" column="0" colspan="2">
+        <item row="13" column="0" colspan="2">
          <widget class="QLineEdit" name="Truck_text"/>
         </item>
-        <item row="7" column="0">
+        <item row="12" column="0">
          <widget class="QPushButton" name="Add_truck">
           <property name="text">
            <string>Add Truck</string>
           </property>
          </widget>
         </item>
-        <item row="9" column="0">
+        <item row="14" column="0">
          <widget class="QLabel" name="label_7">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>Message window</string>
           </property>
          </widget>
         </item>
-        <item row="10" column="0">
+        <item row="15" column="0">
          <widget class="QPushButton" name="Add_message">
           <property name="text">
            <string>Add</string>
           </property>
          </widget>
         </item>
-        <item row="11" column="0" colspan="2">
+        <item row="8" column="1">
+         <widget class="QLabel" name="label_6">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Trucks in route</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QPushButton" name="Stop">
+          <property name="text">
+           <string>Stop</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="1">
+         <widget class="QListWidget" name="Trucks_in_route"/>
+        </item>
+        <item row="15" column="1">
+         <widget class="QLineEdit" name="Route_message"/>
+        </item>
+        <item row="16" column="0" colspan="2">
          <widget class="QListWidget" name="Message_display"/>
         </item>
-        <item row="10" column="1">
-         <widget class="QLineEdit" name="Route_message"/>
+        <item row="7" column="0">
+         <widget class="QRadioButton" name="Reassign">
+          <property name="text">
+           <string>Reassign</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="0">
+         <widget class="QListWidget" name="In_station_list">
+          <item>
+           <property name="text">
+            <string>RV_Rescue vehicle_light_0001</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RV_Rescue vehicle_light_0002</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>C_CARP_heavy_0003</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>C_CARP_0004</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>C_CARP_0006</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CV_L_Combination vehicle_light_0007</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CV_M_Combination vehicle_medium_0008</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RV_Rescue vehicle_0009</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RV_Rescue vehicle_0010</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>AP_M_Aerial platform_0011</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>AP_H_Aerial platform_0012</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PV_M_Pump vehicle_medium_0013</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PV_H_Pump vehicle_heavy_0014</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WB_Water foam boom_0015</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WB_Water foam boom_0016</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WV_Watertank vehicle_0017</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WV_Watertank vehicle_0018</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QPushButton" name="Auto_ON">
+            <property name="text">
+             <string>Auto ON</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Auto_OFF">
+            <property name="text">
+             <string>Auto Off</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
