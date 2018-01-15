@@ -42,7 +42,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     #custom signals
     updateAttribute = QtCore.pyqtSignal(str)
 
-    def __init__(self, iface, parent=None):
+    def __init__(self, iface, parent=None, prnt=None):
         """Constructor."""
         super(DispatchHeroDockWidget, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -51,6 +51,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.parent = prnt
 
         #set up variables
         global Polygon
@@ -64,6 +65,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.dataLoaded = 0
         self.bridgesLayer = None
         self.roadsLayer = None
+        self.log = ''
 
         # setup Decisions interface
         self.Add_message.clicked.connect(self.add_message_alert)
@@ -85,7 +87,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.startCounterButton.clicked.connect(self.startCounter)
         self.stopCounterButton.clicked.connect(self.cancelCounter)
         self.spinBox.setMaximum(20)
-        self.spinBox.setMinimum(0)
+        self.spinBox.setMinimum(1)
         self.spinBox.setValue(5)
         self.In_station_list.itemDoubleClicked.connect(self.Automatic_dispatching)
 
@@ -195,6 +197,9 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.Auto_OFF.setDisabled(True)
         globvars.auto_destination = None
 
+    def logMessage(self, content):
+        self.log += '>>> {}\r\n\t>>> {}\r\n'.format(time.strftime('%H:%M:%S'), content)
+
     def cancelSelection(self):
         if not self.Trucks_in_route.currentItem():
             self.iface.messageBar().pushMessage("Warning",
@@ -203,55 +208,34 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         else:
             self.Message_display.clear()
             car = self.Trucks_in_route.currentItem().text()
-            name = "car" + car + ".txt"
-            file = open(name, 'r')
-            with file:
-                for line in file:
-                    self.Message_display.addItem(line)
-
-            file = open(name, 'a')
             self.Message_display.addItem("----------------------------------")
-            file.write("----------------------------------\n")
             Truck = self.Trucks_in_route.currentItem().text()
             self.Message_display.addItem(Truck)
-            file.write(Truck + "\n")
             self.Message_display.addItem("Cancel route\n")
-            file.write("Cancel route\n")
             self.Message_display.addItem("----------------------------------")
-            file.write("----------------------------------\n")
             self.In_station_list.addItem(Truck)
             self.Trucks_in_route.takeItem(self.Trucks_in_route.currentRow())
-            pass
+            
+            self.logMessage('Route cancelled for ' + Truck)
 
     def addlist_routes(self):
         self.Routes.addItem(self.Route_name.text())
         self.Route_name.setText('')
         self.Route_name.setFocus()
-        pass
 
     def add_message_alert(self):
         self.Message_display.clear()
-        car = self.Trucks_in_route.currentItem().text()
-        name = "car"+ car + ".txt"
-        file = open(name,'r')
-        with file:
-            for line in file:
-                self.Message_display.addItem(line)
 
-        file = open(name, 'a')
         self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
         Truck = self.Trucks_in_route.currentItem().text()
         self.Message_display.addItem(Truck)
-        file.write(Truck+"\n")
         self.Message_display.addItem(self.Route_message.text())
-        file.write(self.Route_message.text()+ "\n")
         self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
         self.Route_message.setText('')
         self.Route_message.setFocus()
-        file.close
-        pass
+        file.close()
+        
+        self.logMessage('{}: {}'.format(Truck, self.Route_message.text()))
 
     def select_route_1(self):
         if globvars.clicked_canvas == False and globvars.Auto == False:
@@ -267,18 +251,13 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                     return
                 self.Message_display.clear()
                 Truck = self.Trucks_in_route.currentItem().text()
-                name = "car" + Truck + ".txt"
-                file = open(name, 'w')
                 self.Message_display.addItem("----------------------------------")
                 self.Message_display.addItem(Truck)
                 self.Message_display.addItem("Reassigned route 1")
                 self.Message_display.addItem(str(globvars.path1))
                 self.Message_display.addItem("----------------------------------")
-                file.write("----------------------------------\n")
-                file.write(Truck + "\n")
-                file.write("Reassigned route 1\n")
-                file.write(str(globvars.path1))
-                file.write("----------------------------------\n")
+
+                self.logMessage(Truck + ' reassigned route 1: ' + str(globvars.path1))
             else:
                 if not self.In_station_list.currentItem():
                     self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
@@ -286,19 +265,15 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                     return
                 self.Message_display.clear()
                 Truck = self.In_station_list.currentItem().text()
-                name = "car" + Truck + ".txt"
-                file = open(name, 'w')
                 self.Message_display.addItem("----------------------------------")
                 self.Trucks_in_route.addItem(Truck)
                 self.Message_display.addItem(Truck)
                 self.Message_display.addItem("Follow route 1")
                 self.Message_display.addItem(str(globvars.path1))
                 self.Message_display.addItem("----------------------------------")
-                file.write("----------------------------------\n")
-                file.write(Truck + "\n")
-                file.write("Follow route 1\n")
-                file.write(str(globvars.path1))
-                file.write("----------------------------------\n")
+
+                self.logMessage(Truck + ' reassigned route 1: ' + str(globvars.path1))
+
                 self.In_station_list.takeItem(self.In_station_list.currentRow())
             self.zoomback()
             globvars.clicked_canvas = False
@@ -317,18 +292,13 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                     return
                 self.Message_display.clear()
                 Truck = self.Trucks_in_route.currentItem().text()
-                name = "car" + Truck + ".txt"
-                file = open(name, 'w')
                 self.Message_display.addItem("----------------------------------")
                 self.Message_display.addItem(Truck)
                 self.Message_display.addItem("Reassigned route 2")
                 self.Message_display.addItem(str(globvars.path2))
                 self.Message_display.addItem("----------------------------------")
-                file.write("----------------------------------\n")
-                file.write(Truck + "\n")
-                file.write("Reassigned route 2\n")
-                file.write(str(globvars.path2))
-                file.write("----------------------------------\n")
+
+                self.logMessage(Truck + ' reassigned route 2: ' + str(globvars.path2))
             else:
                 if not self.In_station_list.currentItem():
                     self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
@@ -336,20 +306,15 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                     return
                 self.Message_display.clear()
                 Truck = self.In_station_list.currentItem().text()
-                name = "car" + Truck + ".txt"
-                file = open(name, 'w')
                 self.Message_display.addItem("----------------------------------")
                 self.Trucks_in_route.addItem(Truck)
                 self.Message_display.addItem(Truck)
                 self.Message_display.addItem("Follow route 2")
                 self.Message_display.addItem(str(globvars.path2))
                 self.Message_display.addItem("----------------------------------")
-                file.write("----------------------------------\n")
-                file.write(Truck + "\n")
-                file.write("Follow route 2\n")
-                file.write(str(globvars.path2))
-                file.write("----------------------------------\n")
                 self.In_station_list.takeItem(self.In_station_list.currentRow())
+
+                self.logMessage(Truck + ' reassigned route 2: ' + str(globvars.path2))
             self.zoomback()
             globvars.clicked_canvas = False
 
@@ -367,18 +332,13 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                     return
                 self.Message_display.clear()
                 Truck = self.Trucks_in_route.currentItem().text()
-                name = "car" + Truck + ".txt"
-                file = open(name, 'w')
                 self.Message_display.addItem("----------------------------------")
                 self.Message_display.addItem(Truck)
                 self.Message_display.addItem("Reassigned route 3")
                 self.Message_display.addItem(str(globvars.path3))
                 self.Message_display.addItem("----------------------------------")
-                file.write("----------------------------------\n")
-                file.write(Truck + "\n")
-                file.write("Reassigned route 3\n")
-                file.write(str(globvars.path3))
-                file.write("----------------------------------\n")
+                
+                self.logMessage(Truck + ' reassigned route 3: ' + str(globvars.path3))
             else:
                 if not self.In_station_list.currentItem():
                     self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
@@ -386,19 +346,14 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                     return
                 self.Message_display.clear()
                 Truck = self.In_station_list.currentItem().text()
-                name = "car" + Truck + ".txt"
-                file = open(name, 'w')
                 self.Message_display.addItem("----------------------------------")
                 self.Trucks_in_route.addItem(Truck)
                 self.Message_display.addItem(Truck)
                 self.Message_display.addItem("Follow route 3")
                 self.Message_display.addItem(str(globvars.path3))
                 self.Message_display.addItem("----------------------------------")
-                file.write("----------------------------------\n")
-                file.write(Truck + "\n")
-                file.write("Follow route 3\n")
-                file.write(str(globvars.path3))
-                file.write("----------------------------------\n")
+                
+                self.logMessage(Truck + ' reassigned route 3: ' + str(globvars.path3))
                 self.In_station_list.takeItem(self.In_station_list.currentRow())
             self.zoomback()
             globvars.clicked_canvas = False
@@ -745,8 +700,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def cancelCounter(self):
         # triggered if the user clicks the cancel button
-        
-        # resetting the roads to available again
+        self.parent.MapTool.clear()
+        # resetting the roads to available again        
         self.roadsLayer.startEditing()
         for feature in self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression('"available" = 0')):
             self.roadsLayer.changeAttributeValue(feature.id(), 1, 1)
@@ -771,10 +726,25 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.resetLayers()
         self.bridgesList.clear()
         self.vesselsList.clear()
-        self.iface.messageBar().pushMessage("Info", "Simulation canceled", level=0, duration=8)
+        self.iface.messageBar().pushMessage("Info", "Simulation canceled", level=0, duration=5)
 
         self.importDataButton.setDisabled(False)
         self.analysisTab.setDisabled(True)
+
+        msg = 'Please select a location for the log file.'
+        reply = QtGui.QMessageBox.question(self, 'Message', 
+                     msg, QtGui.QMessageBox.Yes)
+
+        if QtGui.QMessageBox.Yes:
+            new_file = QtGui.QFileDialog.getExistingDirectory(self, "", self.bridgesPath)
+            if not new_file:
+                return
+            fl = unicode(new_file).replace('\\','/') + '/' + time.strftime('%y%m%d%H%M') + 'log.txt'
+            print fl
+            fh = open(fl, 'w')
+            fh.write(self.log)
+            fh.close()
+            self.iface.messageBar().pushMessage("Info", "File saved to " + unicode(new_file), level=0, duration=5)
 
     def concludeCounter(self, result):
         # clean up timer thread stuff
@@ -811,6 +781,20 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.importDataButton.setDisabled(False)
         self.analysisTab.setDisabled(True)
         self.sampleWidgets.setCurrentIndex(0)
+
+        msg = 'Please select a location for the log file.'
+        reply = QtGui.QMessageBox.question(self, 'Message', 
+                     msg, QtGui.QMessageBox.Yes)
+
+        if QtGui.QMessageBox.Yes:
+            new_file = QtGui.QFileDialog.getExistingDirectory(self, "", self.bridgesPath)
+            if not new_file:
+                return
+            fl = unicode(new_file).replace('\\','/') + '/' + time.strftime('%y%m%d%H%M') + 'log.txt'
+            fh = open(fl, 'w')
+            fh.write(self.log)
+            fh.close()
+            self.iface.messageBar().pushMessage("Info", "File saved in " + fl, level=0, duration=8)
 
 ################################################################
 #Twin parts copied from class MapTool#
@@ -909,6 +893,13 @@ class MapTool(QgsMapTool):
 
     def activate(self):
         self.canvas.setCursor(self.cursor)
+
+    def clear(self):
+        self.canvas.scene().removeItem(self.rubberBandPolyline)
+        self.canvas.scene().removeItem(self.rubberBandPolygon)
+        self.canvas.scene().removeItem(self.rubberBandPath1)
+        self.canvas.scene().removeItem(self.rubberBandPath2)
+        self.canvas.scene().removeItem(self.rubberBandPath3)
 
     def screenToLayerCoords(self, screenPos, layer):
 
