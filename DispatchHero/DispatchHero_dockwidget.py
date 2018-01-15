@@ -34,7 +34,7 @@ from qgis.networkanalysis import *
 from . import globvars
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'new_proposal.ui'))
+    os.path.dirname(__file__), 'DispatchHero_dockwidget_base.ui'))
 
 class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
