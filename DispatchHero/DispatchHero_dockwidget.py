@@ -220,10 +220,11 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         pass
 
     def select_route_1(self):
-        if not self.In_station_list.currentItem():
-            self.iface.messageBar().pushMessage("Warning", "Please select truck first!", level=QgsMessageBar.WARNING, duration=2)
-            return
         if self.Reassign.isChecked() == True:
+            if not self.Trucks_in_route.currentItem():
+                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                    level=QgsMessageBar.WARNING, duration=2)
+                return
             self.Message_display.clear()
             Truck = self.Trucks_in_route.currentItem().text()
             name = "car" + Truck + ".txt"
@@ -239,8 +240,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write(str(globvars.path1))
             file.write("----------------------------------\n")
         else:
+            if not self.In_station_list.currentItem():
+                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                    level=QgsMessageBar.WARNING, duration=2)
+                return
             self.Message_display.clear()
-            Truck = self.Trucks_in_route.currentItem().text()
+            Truck = self.In_station_list.currentItem().text()
             name = "car" + Truck + ".txt"
             file = open(name, 'w')
             self.Message_display.addItem("----------------------------------")
@@ -259,6 +264,10 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def select_route_2(self):
         if self.Reassign.isChecked() == True:
+            if not self.Trucks_in_route.currentItem():
+                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                    level=QgsMessageBar.WARNING, duration=2)
+                return
             self.Message_display.clear()
             Truck = self.Trucks_in_route.currentItem().text()
             name = "car" + Truck + ".txt"
@@ -274,8 +283,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write(str(globvars.path2))
             file.write("----------------------------------\n")
         else:
+            if not self.In_station_list.currentItem():
+                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                    level=QgsMessageBar.WARNING, duration=2)
+                return
             self.Message_display.clear()
-            Truck = self.Trucks_in_route.currentItem().text()
+            Truck = self.In_station_list.currentItem().text()
             name = "car" + Truck + ".txt"
             file = open(name, 'w')
             self.Message_display.addItem("----------------------------------")
@@ -294,6 +307,10 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def select_route_3(self):
         if self.Reassign.isChecked() == True:
+            if not self.Trucks_in_route.currentItem():
+                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                    level=QgsMessageBar.WARNING, duration=2)
+                return
             self.Message_display.clear()
             Truck = self.Trucks_in_route.currentItem().text()
             name = "car" + Truck + ".txt"
@@ -309,8 +326,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write(str(globvars.path3))
             file.write("----------------------------------\n")
         else:
+            if not self.In_station_list.currentItem():
+                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                    level=QgsMessageBar.WARNING, duration=2)
+                return
             self.Message_display.clear()
-            Truck = self.Trucks_in_route.currentItem().text()
+            Truck = self.In_station_list.currentItem().text()
             name = "car" + Truck + ".txt"
             file = open(name, 'w')
             self.Message_display.addItem("----------------------------------")
@@ -765,7 +786,7 @@ class MapTool(QgsMapTool):
                     y_max = coord[1]
                 if coord[1] < y_min:
                     y_min = coord[1]
-            zoomextent = QgsRectangle(x_min, y_min, x_max, y_max)
+            zoomextent = QgsRectangle(float(x_min), float(y_min), float(x_max), y_max)
             self.rezoom(zoomextent)
 
     def buildNetwork(self):
