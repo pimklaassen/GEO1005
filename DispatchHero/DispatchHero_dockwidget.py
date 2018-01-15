@@ -68,8 +68,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.Route1.clicked.connect(self.select_route_1)
         self.Route2.clicked.connect(self.select_route_2)
         self.Route3.clicked.connect(self.select_route_3)
-        self.Add_truck.clicked.connect(self.add_truck_instance)
-        self.Delete_truck.clicked.connect(self.delete_truck_instance)
+        #self.Add_truck.clicked.connect(self.add_truck_instance)
+        #self.Delete_truck.clicked.connect(self.delete_truck_instance)
         self.Auto_ON.clicked.connect(self.autoOn)
         self.Auto_OFF.clicked.connect(self.autoOff)
         self.Stop.clicked.connect(self.cancelSelection)
@@ -88,6 +88,10 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         self.startCounterButton.setDisabled(True)
         self.stopCounterButton.setDisabled(True)
+        self.Auto_OFF.setDisabled(True)
+        self.importBridgesButton.setDisabled(True)
+        self.importVesselsButton.setDisabled(True)
+        self.analysisTab.setDisabled(True)
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
@@ -96,14 +100,20 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def setSpeed(self):
         self.speed = 1 * self.spinBox.value()
 
-    def drawPolygon(self, LayerPoint = (-1,-1)):
+    def drawPolygon(self):
         global Polygon
         if Polygon == False:
             Polygon = True
+            self.drawPolygonButton.isChecked()
         else:
             Polygon = False
+            self.drawPolygonButton.isChecked()
         global polygonlist
         polygonlist = []
+
+    def zoomback(self):
+        self.canvas.zoomToFeatureExtent(globvars.dispatchzoom)
+        self.canvas.refresh()
 
 #################################################################################################################
 
@@ -112,18 +122,43 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.Message_display.addItem("----------------------------------")
         self.Message_display.addItem("Station full")
         self.Message_display.addItem("----------------------------------")
+        if self.Station1.isChecked() == True and self.Station_1_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 1")
+            self.Message_display.addItem("----------------------------------")
+        elif self.Station2.isChecked() == True and self.Station_2_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 2")
+            self.Message_display.addItem("----------------------------------")
+        elif self.Station3.isChecked() == True and self.Station_3_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 3")
+            self.Message_display.addItem("----------------------------------")
+        elif self.Station4.isChecked() == True and self.Station_4_status.value()<100:
+            self.Message_display.addItem("Request help")
+            self.Message_display.addItem("Station 4")
+            self.Message_display.addItem("----------------------------------")
+        else:
+            self.Message_display.addItem("Station not available")
+            self.Message_display.addItem("----------------------------------")
 
     def autoOn(self):
         self.Message_display.clear()
         self.Message_display.addItem("----------------------------------")
         self.Message_display.addItem("AutoDispatch ON")
         self.Message_display.addItem("----------------------------------")
+        globvars.Auto = True
+        self.Auto_ON.setDisabled(True)
+        self.Auto_OFF.setDisabled(False)
 
     def autoOff(self):
         self.Message_display.clear()
         self.Message_display.addItem("----------------------------------")
         self.Message_display.addItem("AutoDispatch OFF")
         self.Message_display.addItem("----------------------------------")
+        globvars.Auto = False
+        self.Auto_ON.setDisabled(False)
+        self.Auto_OFF.setDisabled(True)
 
     def cancelSelection(self):
         self.Message_display.clear()
@@ -187,10 +222,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.Message_display.addItem("----------------------------------")
             self.Message_display.addItem(Truck)
             self.Message_display.addItem("Reassigned route 1")
+            self.Message_display.addItem(str(globvars.path1))
             self.Message_display.addItem("----------------------------------")
             file.write("----------------------------------\n")
             file.write(Truck + "\n")
             file.write("Reassigned route 1\n")
+            file.write(str(globvars.path1))
             file.write("----------------------------------\n")
         else:
             self.Message_display.clear()
@@ -201,13 +238,15 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.Trucks_in_route.addItem(Truck)
             self.Message_display.addItem(Truck)
             self.Message_display.addItem("Follow route 1")
+            self.Message_display.addItem(str(globvars.path1))
             self.Message_display.addItem("----------------------------------")
             file.write("----------------------------------\n")
             file.write(Truck + "\n")
             file.write("Follow route 1\n")
+            file.write(str(globvars.path1))
             file.write("----------------------------------\n")
             self.In_station_list.takeItem(self.In_station_list.currentRow())
-        pass
+        self.zoomback()
 
     def select_route_2(self):
         if self.Reassign.isChecked() == True:
@@ -218,10 +257,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.Message_display.addItem("----------------------------------")
             self.Message_display.addItem(Truck)
             self.Message_display.addItem("Reassigned route 2")
+            self.Message_display.addItem(str(globvars.path2))
             self.Message_display.addItem("----------------------------------")
             file.write("----------------------------------\n")
             file.write(Truck + "\n")
             file.write("Reassigned route 2\n")
+            file.write(str(globvars.path2))
             file.write("----------------------------------\n")
         else:
             self.Message_display.clear()
@@ -232,13 +273,15 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.Trucks_in_route.addItem(Truck)
             self.Message_display.addItem(Truck)
             self.Message_display.addItem("Follow route 2")
+            self.Message_display.addItem(str(globvars.path2))
             self.Message_display.addItem("----------------------------------")
             file.write("----------------------------------\n")
             file.write(Truck + "\n")
             file.write("Follow route 2\n")
+            file.write(str(globvars.path2))
             file.write("----------------------------------\n")
             self.In_station_list.takeItem(self.In_station_list.currentRow())
-        pass
+        self.zoomback()
 
     def select_route_3(self):
         if self.Reassign.isChecked() == True:
@@ -249,10 +292,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.Message_display.addItem("----------------------------------")
             self.Message_display.addItem(Truck)
             self.Message_display.addItem("Reassigned route 3")
+            self.Message_display.addItem(str(globvars.path3))
             self.Message_display.addItem("----------------------------------")
             file.write("----------------------------------\n")
             file.write(Truck + "\n")
             file.write("Reassigned route 3\n")
+            file.write(str(globvars.path3))
             file.write("----------------------------------\n")
         else:
             self.Message_display.clear()
@@ -263,21 +308,23 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.Trucks_in_route.addItem(Truck)
             self.Message_display.addItem(Truck)
             self.Message_display.addItem("Follow route 3")
+            self.Message_display.addItem(str(globvars.path3))
             self.Message_display.addItem("----------------------------------")
             file.write("----------------------------------\n")
             file.write(Truck + "\n")
             file.write("Follow route 3\n")
+            file.write(str(globvars.path3))
             file.write("----------------------------------\n")
             self.In_station_list.takeItem(self.In_station_list.currentRow())
-        pass
+        self.zoomback()
 
-    def add_truck_instance(self):
-        self.In_station_list.addItem(self.Truck_text.text())
-        self.Truck_text.setText('')
+    # def add_truck_instance(self):
+    #     self.In_station_list.addItem(self.Truck_text.text())
+    #     self.Truck_text.setText('')
 
-    def delete_truck_instance(self):
-        self.In_station_list.takeItem(self.In_station_list.currentRow())
-        pass
+    # def delete_truck_instance(self):
+    #     self.In_station_list.takeItem(self.In_station_list.currentRow())
+    #     pass
 
 ###################################################################################################
 
@@ -303,6 +350,9 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         self.iface.messageBar().pushMessage("Info", "Project imported", level=0, duration=2)
 
+        self.importDataButton.setDisabled(True)
+        self.importBridgesButton.setDisabled(False)
+
     def importBridgesData(self, filename=''):
         new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
         if not new_file:
@@ -317,6 +367,9 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         self.iface.messageBar().pushMessage("Info", "Bridge opening data imported", level=0, duration=2)
 
+        self.importBridgesButton.setDisabled(True)
+        self.importVesselsButton.setDisabled(False)
+
     def importVesselsData(self, filename=''):
         new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
         if not new_file:
@@ -330,6 +383,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.vesselGenerator.parse()
 
         self.iface.messageBar().pushMessage("Info", "Vessel stream imported", level=0, duration=2)
+
+        self.importVesselsButton.setDisabled(True)
 
     def resetLayers(self):
         self.bridgesLayer.startEditing()
@@ -523,6 +578,9 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.importVesselsButton.setDisabled(True)
         self.importDataButton.setDisabled(True)
 
+        self.analysisTab.setDisabled(False)
+        self.sampleWidgets.setCurrentIndex(1)
+
     def cancelCounter(self):
         # triggered if the user clicks the cancel button
         
@@ -553,8 +611,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.vesselsList.clear()
         self.iface.messageBar().pushMessage("Info", "Simulation canceled", level=0, duration=8)
 
-        self.importBridgesButton.setDisabled(False)
-        self.importVesselsButton.setDisabled(False)
         self.importDataButton.setDisabled(False)
 
     def concludeCounter(self, result):
@@ -589,13 +645,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # do something with the results
         self.iface.messageBar().pushMessage("Info", "Simulation finished", level=0, duration=8)
 
-        self.importBridgesButton.setDisabled(False)
-        self.importVesselsButton.setDisabled(False)
         self.importDataButton.setDisabled(False)
 
 class MapTool(QgsMapTool):
-    def __init__(self, canvas):
+    def __init__(self, canvas, iface):
         super(QgsMapTool, self).__init__(canvas)
+        self.iface = iface
         self.canvas = canvas
         self.cursor = QCursor(Qt.CrossCursor)
         self.rubberBandPolyline = QgsRubberBand(self.canvas, False)
@@ -682,9 +737,9 @@ class MapTool(QgsMapTool):
                 globvars.changes = False
                 self.buildNetwork()
             if self.graph and self.tied_points:
-                path1, path2, path3 = self.calculateRoute()
+                globvars.path1, globvars.path2, globvars.path3 = self.calculateRoute()
             #change the zoom setting
-            all_paths = path1 + path2 + path3
+            all_paths = globvars.path1 + globvars.path2 + globvars.path3
             x_max = float("-inf")
             x_min = float("inf")
             y_max = float("-inf")
@@ -698,13 +753,8 @@ class MapTool(QgsMapTool):
                     y_max = coord[1]
                 if coord[1] < y_min:
                     y_min = coord[1]
-            zoomextent = (x_min, y_min, x_max, y_max)
-            #self.adaptzoom(zoomextent)
-
-    """def adaptzoom(self, zoomextent):
-        self.canvas.zoomToExtent(QgsRectangle(zoomextent))
-        self.canvas.refresh()
-        print "frozen canvas?", DispatchHeroDockWidget.canvas.isFrozen()"""
+            zoomextent = QgsRectangle(x_min, y_min, x_max, y_max)
+            self.rezoom(zoomextent)
 
     def buildNetwork(self):
         #the first time the network is built, the layers need to be found basing on their names
@@ -772,7 +822,7 @@ class MapTool(QgsMapTool):
                 for point in path:
                     ptstoadd.append(QgsPoint(point[0], point[1]))
                 self.rubberBandPath1.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                self.rubberBandPath1.setColor(QColor(128, 255, 0))
+                self.rubberBandPath1.setColor(QColor(100, 175, 29))
                 self.rubberBandPath1.setWidth(3)
             #determine via points for the alternative routings
             if path:
@@ -826,14 +876,19 @@ class MapTool(QgsMapTool):
                 #display the alternative route layers and adapt the zoom
                     if display_indicator == 2:
                         self.rubberBandPath2.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                        self.rubberBandPath2.setColor(QColor(51, 160, 0))
+                        self.rubberBandPath2.setColor(QColor(45, 96, 163))
                         self.rubberBandPath2.setWidth(3)
                     if display_indicator == 3:
                         self.rubberBandPath3.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                        self.rubberBandPath3.setColor(QColor(102, 51, 0))
+                        self.rubberBandPath3.setColor(QColor(247, 165, 51))
                         self.rubberBandPath3.setWidth(3)
                     display_indicator +=1
         return path, alt_path[2], alt_path[3]
+
+    def rezoom(self, zoomextent):
+        globvars.dispatchzoom = self.canvas.extent()
+        self.canvas.zoomToFeatureExtent(zoomextent)
+        self.canvas.refresh()
 
 class TimedEvent(QtCore.QThread):
     timerFinished = QtCore.pyqtSignal(list)

@@ -175,7 +175,7 @@ class DispatchHero:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         # Create a new NearestFeatureMapTool and keep reference
-        self.MapTool = MapTool(self.iface.mapCanvas())
+        self.MapTool = MapTool(self.iface.mapCanvas(), self.iface)
 
         icon_path = ':/plugins/DispatchHero/icon.png'
         action = self.add_action(
@@ -184,7 +184,6 @@ class DispatchHero:
             callback=self.run,
             parent=self.iface.mainWindow())
 
-        action.setCheckable(True)
         self.MapTool.setAction(action)
 
     #--------------------------------------------------------------------------
