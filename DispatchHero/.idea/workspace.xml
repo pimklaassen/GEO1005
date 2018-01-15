@@ -14,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="DispatchHero_dockwidget.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DispatchHero_dockwidget.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DispatchHero_dockwidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="573">
-              <caret line="923" column="21" lean-forward="true" selection-start-line="923" selection-start-column="0" selection-end-line="924" selection-end-column="0" />
+            <state relative-caret-position="342">
+              <caret line="869" column="19" lean-forward="true" selection-start-line="869" selection-start-column="19" selection-end-line="869" selection-end-column="19" />
               <folding>
                 <element signature="e#1154#1184#0" expanded="true" />
               </folding>
@@ -26,11 +26,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DispatchHero_dockwidget_copy for final.py" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/DispatchHero_dockwidget_copy for final.py">
+      <file leaf-file-name="DispatchHero_dockwidget_copy.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DispatchHero_dockwidget_copy.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="585">
-              <caret line="717" column="73" lean-forward="true" selection-start-line="717" selection-start-column="73" selection-end-line="717" selection-end-column="73" />
+            <state relative-caret-position="489">
+              <caret line="880" column="46" lean-forward="true" selection-start-line="880" selection-start-column="46" selection-end-line="880" selection-end-column="46" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DispatchHero_dockwidget_copy.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/DispatchHero_dockwidget_copy.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="711">
+              <caret line="641" column="8" lean-forward="false" selection-start-line="641" selection-start-column="8" selection-end-line="641" selection-end-column="43" />
               <folding />
             </state>
           </provider>
@@ -46,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="globvars.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="globvars.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/globvars.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="12" column="16" lean-forward="false" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
+            <state relative-caret-position="105">
+              <caret line="5" column="16" lean-forward="true" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="16" />
               <folding />
             </state>
           </provider>
@@ -61,16 +71,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="63">
               <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="12" selection-end-column="21" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DispatchHero_dockwidget_copy4.py" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/DispatchHero_dockwidget_copy4.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-213">
-              <caret line="111" column="38" lean-forward="false" selection-start-line="111" selection-start-column="38" selection-end-line="111" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -105,6 +105,9 @@
       <find>conclu</find>
       <find>in_station</find>
       <find>rezoom</find>
+      <find>build</find>
+      <find>qtgui</find>
+      <find>buildnetwor</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -114,8 +117,8 @@
         <option value="$PROJECT_DIR$/DispatchHero_dockwidget_base.ui" />
         <option value="$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/DispatchHero_dockwidget_copy for final.py" />
         <option value="$PROJECT_DIR$/DispatchHero.py" />
-        <option value="$PROJECT_DIR$/globvars.py" />
         <option value="$PROJECT_DIR$/DispatchHero_dockwidget.py" />
+        <option value="$PROJECT_DIR$/globvars.py" />
       </list>
     </option>
   </component>
@@ -164,6 +167,11 @@
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/plugin/online tutorial test/SaveAttributes" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Pablo\Documents\GitHub\GEO1005_GROUP-7\DispatchHero" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -293,13 +301,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../SpatialDecision/utility_functions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11991">
-          <caret line="571" column="0" lean-forward="false" selection-start-line="571" selection-start-column="0" selection-end-line="598" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/plugin/shortest path" />
     <entry file="file://$PROJECT_DIR$/shortest path" />
     <entry file="file://$PROJECT_DIR$/resources.py">
@@ -387,14 +388,7 @@
     <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/plugin/shortest path" />
     <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/plugin/GUIcopy.ui" />
     <entry file="file://$PROJECT_DIR$/DispatchHero_dockwidget_base.py" />
-    <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/DispatchHero_dockwidget_copy4.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-213">
-          <caret line="111" column="38" lean-forward="false" selection-start-line="111" selection-start-column="38" selection-end-line="111" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/DispatchHero_dockwidget_copy4.py" />
     <entry file="file://$PROJECT_DIR$/DispatchHero.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="259">
@@ -530,29 +524,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/DispatchHero_dockwidget_copy for final.py">
+    <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/DispatchHero_dockwidget_copy for final.py" />
+    <entry file="file://$PROJECT_DIR$/DispatchHero_dockwidget_copy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="717" column="73" lean-forward="true" selection-start-line="717" selection-start-column="73" selection-end-line="717" selection-end-column="73" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/globvars.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="12" column="16" lean-forward="false" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
+        <state relative-caret-position="489">
+          <caret line="880" column="46" lean-forward="true" selection-start-line="880" selection-start-column="46" selection-end-line="880" selection-end-column="46" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/DispatchHero_dockwidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="573">
-          <caret line="923" column="21" lean-forward="true" selection-start-line="923" selection-start-column="0" selection-end-line="924" selection-end-column="0" />
+        <state relative-caret-position="342">
+          <caret line="869" column="19" lean-forward="true" selection-start-line="869" selection-start-column="19" selection-end-line="869" selection-end-column="19" />
           <folding>
             <element signature="e#1154#1184#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/globvars.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="5" column="16" lean-forward="true" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="16" />
+          <folding />
         </state>
       </provider>
     </entry>
