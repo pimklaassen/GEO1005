@@ -188,8 +188,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         else:
             if self.init_graph == False or globvars.changes == True:
                 self.BuildNetwork()
-            self.
-
 
     def autoOff(self):
         globvars.Auto = False
@@ -460,6 +458,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
                 self.importDataButton.setDisabled(True)
                 self.importBridgesButton.setDisabled(False)
+                self.projectLine.setText(new_file)
             except:
                 self.iface.messageBar().pushMessage("Info", "Project doesn't have bridges/roads layer!", level=QgsMessageBar.WARNING, duration=3)
 
@@ -506,6 +505,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         self.importBridgesButton.setDisabled(True)
         self.importVesselsButton.setDisabled(False)
+        self.bridgeLine.setText(new_file)
 
     def importVesselsData(self, filename=''):
         new_file = None
@@ -549,6 +549,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.iface.messageBar().pushMessage("Info", "Vessel stream imported", level=0, duration=2)
 
         self.importVesselsButton.setDisabled(True)
+        self.vesselLine.setText(new_file)
 
     def resetLayers(self):
         self.bridgesLayer.startEditing()
