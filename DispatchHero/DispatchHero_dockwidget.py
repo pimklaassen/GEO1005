@@ -106,7 +106,15 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def closeEvent(self, event):
 
         try:
-            self.cancelCounter()
+            self.dataLoaded = 0
+            self.timerThread.stop()
+            self.vesselThread.stop()
+            self.Trucks_in_route.clear()
+            self.bridgesList.clear()
+            self.vesselsList.clear()
+            self.resetLayers()
+            self.startCounterButton.setDisabled(False)
+            self.stopCounterButton.setDisabled(True)
         except:
             pass
 
