@@ -604,8 +604,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
             if not all(check):
                 globvars.changes = True
-            else:
-                globvars.changes = False
 
         # make new generator object
         selection = self.bridgesLayer.getFeatures(QgsFeatureRequest().setFilterExpression(query_init))
