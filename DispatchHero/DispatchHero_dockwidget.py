@@ -34,7 +34,7 @@ from qgis.networkanalysis import *
 from . import globvars
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'DispatchHero_dockwidget_base.ui'))
+    os.path.dirname(__file__), 'new_proposal.ui'))
 
 class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
@@ -58,31 +58,28 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.iface = iface
         self.canvas = self.iface.mapCanvas()
         self.openingRoads = []
+        self.pendingList = []
         self.states = {}
         self.speed = 1
+        self.dataLoaded = 0
 
         # setup Decisions interface
         self.Add_message.clicked.connect(self.add_message_alert)
-
         self.Route1.clicked.connect(self.select_route_1)
         self.Route2.clicked.connect(self.select_route_2)
         self.Route3.clicked.connect(self.select_route_3)
-
         self.Add_truck.clicked.connect(self.add_truck_instance)
         self.Delete_truck.clicked.connect(self.delete_truck_instance)
-
         self.Auto_ON.clicked.connect(self.autoOn)
         self.Auto_OFF.clicked.connect(self.autoOff)
-
         self.Stop.clicked.connect(self.cancelSelection)
-
         self.Help.clicked.connect(self.request_help)
 
         # set up GUI operation signals
         self.importDataButton.clicked.connect(self.importData)
-
+        self.importBridgesButton.clicked.connect(self.importBridgesData)
+        self.importVesselsButton.clicked.connect(self.importVesselsData)
         self.drawPolygonButton.clicked.connect(self.drawPolygon)
-
         self.startCounterButton.clicked.connect(self.startCounter)
         self.stopCounterButton.clicked.connect(self.cancelCounter)
         self.spinBox.setMaximum(20)
@@ -303,7 +300,36 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.states[br] = tr
         
         self.resetLayers()
-        self.startCounterButton.setDisabled(False)
+
+        self.iface.messageBar().pushMessage("Info", "Project imported", level=0, duration=2)
+
+    def importBridgesData(self, filename=''):
+        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+        if not new_file:
+            return
+        self.fh_1 = open(new_file, 'r')
+        self.dataLoaded += 1
+        if self.dataLoaded == 2:
+            self.startCounterButton.setDisabled(False)
+
+        self.bridgesGenerator = uf.BridgeParser(self.fh_1)
+        self.bridgesGenerator.parse()
+
+        self.iface.messageBar().pushMessage("Info", "Bridge opening data imported", level=0, duration=2)
+
+    def importVesselsData(self, filename=''):
+        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
+        if not new_file:
+            return
+        self.fh_2 = open(new_file, 'r')
+        self.dataLoaded += 1
+        if self.dataLoaded == 2:
+            self.startCounterButton.setDisabled(False)
+
+        self.vesselGenerator = uf.vesselParser(self.fh_2)
+        self.vesselGenerator.parse()
+
+        self.iface.messageBar().pushMessage("Info", "Vessel stream imported", level=0, duration=2)
 
     def resetLayers(self):
         self.bridgesLayer.startEditing()
@@ -358,11 +384,14 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 self.roadsLayer.changeAttributeValue(road.id(), 1, 2)
             self.roadsLayer.commitChanges()
 
-        self.pendingList = []
-        self.pendingList.append(obj['name'])
+        # add pending bridge to pendingList, set change to True!
+        if not obj['brige'] in self.pendingList:
+            self.pendingList.append(obj['brige'])
+            globvars.change = True
+            print 'CHANGE'
 
         log = '{} will open for {}'.format(pending_bridge, obj['name'])
-        self.trucksList.addItem(log)
+        self.vesselsList.addItem(log)
 
     def showBridges(self, bridgeTime):
 
@@ -412,6 +441,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         if len(self.openingRoads) != len(new):
             globvars.changes = True
+            print 'CHANGE'
         else:
             for sid_1, sid_2 in zip(self.openingRoads, new):
                 if sid_1 == int(sid_2):
@@ -421,6 +451,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
             if not all(check):
                 globvars.changes = True
+                print 'CHANGE'
             else:
                 globvars.changes = False
 
@@ -442,7 +473,22 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.bridgesLayer.changeAttributeValue(feature.id(), 2, 'open')
             self.states[feature.attributes()[2]] = 'open'
             sid = feature.attributes()[0]
+            name = feature.attributes()[1]
             self.openingRoads.append(int(sid))
+
+            # change detection when pending bridge closes, to get it out of the pendingList!
+            if name == 'Erasmusbrug':
+                try:
+                    self.pendingList.remove('erasmus')
+                    glovars.change = True
+                except:
+                    pass
+            if name == 'GRT02_9de96a85-078b-4954-82ad-3bec2e22a75b':
+                try:
+                    self.pendingList.remove('koninginne')
+                    globvars.change = True
+                except:
+                    pass
 
             # updating the road network
             closing_roads = self.roadsLayer.getFeatures(QgsFeatureRequest().setFilterExpression('"sid" = {}'.format(sid)))
@@ -456,19 +502,11 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def startCounter(self):
         # prepare the thread of the timed even or long loop
         self.setSpeed()
-        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
-        fh = open(new_file, 'r')
-        self.bridgesGenerator = uf.BridgeParser(fh)
-        self.bridgesGenerator.parse()
         self.timerThread = TimedEvent(self.iface.mainWindow(), self, self.bridgesGenerator.generator())
         self.timerThread.timerFinished.connect(self.concludeCounter)
         self.timerThread.timerError.connect(self.cancelCounter)
         self.timerThread.displayBridges.connect(self.showBridges)
 
-        new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
-        fh = open(new_file, 'r')
-        self.vesselGenerator = uf.vesselParser(fh)
-        self.vesselGenerator.parse()
         self.vesselThread = TimedVesselEvent(self.iface.mainWindow(), self, self.vesselGenerator.generator())
         self.vesselThread.timerFinished.connect(self.concludeCounter)
         self.vesselThread.timerError.connect(self.cancelCounter)
@@ -480,6 +518,11 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.startCounterButton.setDisabled(True)
         self.stopCounterButton.setDisabled(False)
         self.spinBox.setDisabled(True)
+        self.sampleWidgets.setCurrentIndex(1)
+
+        self.importBridgesButton.setDisabled(True)
+        self.importVesselsButton.setDisabled(True)
+        self.importDataButton.setDisabled(True)
 
     def cancelCounter(self):
         # triggered if the user clicks the cancel button
@@ -508,8 +551,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.stopCounterButton.setDisabled(True)
         self.resetLayers()
         self.bridgesList.clear()
-        self.trucksList.clear()
+        self.vesselsList.clear()
         self.iface.messageBar().pushMessage("Info", "Simulation canceled", level=0, duration=8)
+
+        self.importBridgesButton.setDisabled(False)
+        self.importVesselsButton.setDisabled(False)
+        self.importDataButton.setDisabled(False)
 
     def concludeCounter(self, result):
         # clean up timer thread stuff
@@ -539,10 +586,13 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.spinBox.setDisabled(False)
         self.resetLayers()
         self.bridgesList.clear()
-        self.trucksList.clear()
+        self.vesselsList.clear()
         # do something with the results
         self.iface.messageBar().pushMessage("Info", "Simulation finished", level=0, duration=8)
 
+        self.importBridgesButton.setDisabled(False)
+        self.importVesselsButton.setDisabled(False)
+        self.importDataButton.setDisabled(False)
 
 class MapTool(QgsMapTool):
     def __init__(self, canvas):
