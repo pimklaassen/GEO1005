@@ -27,7 +27,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import QCursor, QPixmap, QColor
 from PyQt4.QtCore import QThread, QVariant
 from . import utility_functions as uf
-from qgis.gui import QgsMapTool, QgsRubberBand
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 from qgis.core import *
 import processing
 from qgis.networkanalysis import *
@@ -94,6 +94,12 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.analysisTab.setDisabled(True)
 
     def closeEvent(self, event):
+
+        try:
+            self.cancelCounter()
+        except:
+            pass
+
         self.closingPlugin.emit()
         event.accept()
 
@@ -214,6 +220,9 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         pass
 
     def select_route_1(self):
+        if not self.In_station_list.currentItem():
+            self.iface.messageBar().pushMessage("Warning", "Please select truck first!", level=QgsMessageBar.WARNING, duration=2)
+            return
         if self.Reassign.isChecked() == True:
             self.Message_display.clear()
             Truck = self.Trucks_in_route.currentItem().text()
@@ -231,7 +240,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write("----------------------------------\n")
         else:
             self.Message_display.clear()
-            Truck = self.In_station_list.currentItem().text()
+            Truck = self.Trucks_in_route.currentItem().text()
             name = "car" + Truck + ".txt"
             file = open(name, 'w')
             self.Message_display.addItem("----------------------------------")
@@ -266,7 +275,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write("----------------------------------\n")
         else:
             self.Message_display.clear()
-            Truck = self.In_station_list.currentItem().text()
+            Truck = self.Trucks_in_route.currentItem().text()
             name = "car" + Truck + ".txt"
             file = open(name, 'w')
             self.Message_display.addItem("----------------------------------")
@@ -301,7 +310,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             file.write("----------------------------------\n")
         else:
             self.Message_display.clear()
-            Truck = self.In_station_list.currentItem().text()
+            Truck = self.Trucks_in_route.currentItem().text()
             name = "car" + Truck + ".txt"
             file = open(name, 'w')
             self.Message_display.addItem("----------------------------------")
@@ -329,6 +338,9 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 ###################################################################################################
 
     def importData(self, filename=''):
+        # try:
+        #     f = open('cache.txt', 'r')
+
         new_file = QtGui.QFileDialog.getOpenFileName(self, "", os.path.dirname(os.path.abspath(__file__)))
         if new_file:
             self.iface.addProject(unicode(new_file))
@@ -443,7 +455,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if not obj['brige'] in self.pendingList:
             self.pendingList.append(obj['brige'])
             globvars.change = True
-            print 'CHANGE'
 
         log = '{} will open for {}'.format(pending_bridge, obj['name'])
         self.vesselsList.addItem(log)
@@ -496,7 +507,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         if len(self.openingRoads) != len(new):
             globvars.changes = True
-            print 'CHANGE'
         else:
             for sid_1, sid_2 in zip(self.openingRoads, new):
                 if sid_1 == int(sid_2):
@@ -506,7 +516,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
             if not all(check):
                 globvars.changes = True
-                print 'CHANGE'
             else:
                 globvars.changes = False
 
@@ -612,6 +621,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.iface.messageBar().pushMessage("Info", "Simulation canceled", level=0, duration=8)
 
         self.importDataButton.setDisabled(False)
+        self.analysisTab.setDisabled(True)
 
     def concludeCounter(self, result):
         # clean up timer thread stuff
@@ -646,6 +656,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.iface.messageBar().pushMessage("Info", "Simulation finished", level=0, duration=8)
 
         self.importDataButton.setDisabled(False)
+        self.analysisTab.setDisabled(True)
+        self.sampleWidgets.setCurrentIndex(0)
 
 class MapTool(QgsMapTool):
     def __init__(self, canvas, iface):
