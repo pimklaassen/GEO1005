@@ -132,6 +132,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         else:
             Polygon = False
             self.drawPolygonButton.isChecked()
+            self.iface.messageBar().pushMessage("Info", "Select destination on map to dispatch trucks",
+                                                level=0, duration=3)
         global polygonlist
         polygonlist = []
 
@@ -238,133 +240,154 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         pass
 
     def select_route_1(self):
-        if self.Reassign.isChecked() == True:
-            if not self.Trucks_in_route.currentItem():
-                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
-                                                    level=QgsMessageBar.WARNING, duration=2)
-                return
-            self.Message_display.clear()
-            Truck = self.Trucks_in_route.currentItem().text()
-            name = "car" + Truck + ".txt"
-            file = open(name, 'w')
-            self.Message_display.addItem("----------------------------------")
-            self.Message_display.addItem(Truck)
-            self.Message_display.addItem("Reassigned route 1")
-            self.Message_display.addItem(str(globvars.path1))
-            self.Message_display.addItem("----------------------------------")
-            file.write("----------------------------------\n")
-            file.write(Truck + "\n")
-            file.write("Reassigned route 1\n")
-            file.write(str(globvars.path1))
-            file.write("----------------------------------\n")
+        if globvars.clicked_canvas == False:
+            self.iface.messageBar().pushMessage("Warning",
+                                                "Choose a destination by clicking on map first!",
+                                                level=QgsMessageBar.WARNING, duration=2)
+            return
         else:
-            if not self.In_station_list.currentItem():
-                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
-                                                    level=QgsMessageBar.WARNING, duration=2)
-                return
-            self.Message_display.clear()
-            Truck = self.In_station_list.currentItem().text()
-            name = "car" + Truck + ".txt"
-            file = open(name, 'w')
-            self.Message_display.addItem("----------------------------------")
-            self.Trucks_in_route.addItem(Truck)
-            self.Message_display.addItem(Truck)
-            self.Message_display.addItem("Follow route 1")
-            self.Message_display.addItem(str(globvars.path1))
-            self.Message_display.addItem("----------------------------------")
-            file.write("----------------------------------\n")
-            file.write(Truck + "\n")
-            file.write("Follow route 1\n")
-            file.write(str(globvars.path1))
-            file.write("----------------------------------\n")
-            self.In_station_list.takeItem(self.In_station_list.currentRow())
-        self.zoomback()
+            if self.Reassign.isChecked() == True:
+                if not self.Trucks_in_route.currentItem():
+                    self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                        level=QgsMessageBar.WARNING, duration=2)
+                    return
+                self.Message_display.clear()
+                Truck = self.Trucks_in_route.currentItem().text()
+                name = "car" + Truck + ".txt"
+                file = open(name, 'w')
+                self.Message_display.addItem("----------------------------------")
+                self.Message_display.addItem(Truck)
+                self.Message_display.addItem("Reassigned route 1")
+                self.Message_display.addItem(str(globvars.path1))
+                self.Message_display.addItem("----------------------------------")
+                file.write("----------------------------------\n")
+                file.write(Truck + "\n")
+                file.write("Reassigned route 1\n")
+                file.write(str(globvars.path1))
+                file.write("----------------------------------\n")
+            else:
+                if not self.In_station_list.currentItem():
+                    self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                        level=QgsMessageBar.WARNING, duration=2)
+                    return
+                self.Message_display.clear()
+                Truck = self.In_station_list.currentItem().text()
+                name = "car" + Truck + ".txt"
+                file = open(name, 'w')
+                self.Message_display.addItem("----------------------------------")
+                self.Trucks_in_route.addItem(Truck)
+                self.Message_display.addItem(Truck)
+                self.Message_display.addItem("Follow route 1")
+                self.Message_display.addItem(str(globvars.path1))
+                self.Message_display.addItem("----------------------------------")
+                file.write("----------------------------------\n")
+                file.write(Truck + "\n")
+                file.write("Follow route 1\n")
+                file.write(str(globvars.path1))
+                file.write("----------------------------------\n")
+                self.In_station_list.takeItem(self.In_station_list.currentRow())
+            self.zoomback()
+            globvars.clicked_canvas = False
 
     def select_route_2(self):
-        if self.Reassign.isChecked() == True:
-            if not self.Trucks_in_route.currentItem():
-                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
-                                                    level=QgsMessageBar.WARNING, duration=2)
-                return
-            self.Message_display.clear()
-            Truck = self.Trucks_in_route.currentItem().text()
-            name = "car" + Truck + ".txt"
-            file = open(name, 'w')
-            self.Message_display.addItem("----------------------------------")
-            self.Message_display.addItem(Truck)
-            self.Message_display.addItem("Reassigned route 2")
-            self.Message_display.addItem(str(globvars.path2))
-            self.Message_display.addItem("----------------------------------")
-            file.write("----------------------------------\n")
-            file.write(Truck + "\n")
-            file.write("Reassigned route 2\n")
-            file.write(str(globvars.path2))
-            file.write("----------------------------------\n")
+        if globvars.clicked_canvas == False:
+            self.iface.messageBar().pushMessage("Warning",
+                                                "Choose a destination by clicking on map first!",
+                                                level=QgsMessageBar.WARNING, duration=2)
+            return
         else:
-            if not self.In_station_list.currentItem():
-                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
-                                                    level=QgsMessageBar.WARNING, duration=2)
-                return
-            self.Message_display.clear()
-            Truck = self.In_station_list.currentItem().text()
-            name = "car" + Truck + ".txt"
-            file = open(name, 'w')
-            self.Message_display.addItem("----------------------------------")
-            self.Trucks_in_route.addItem(Truck)
-            self.Message_display.addItem(Truck)
-            self.Message_display.addItem("Follow route 2")
-            self.Message_display.addItem(str(globvars.path2))
-            self.Message_display.addItem("----------------------------------")
-            file.write("----------------------------------\n")
-            file.write(Truck + "\n")
-            file.write("Follow route 2\n")
-            file.write(str(globvars.path2))
-            file.write("----------------------------------\n")
-            self.In_station_list.takeItem(self.In_station_list.currentRow())
-        self.zoomback()
+            if self.Reassign.isChecked() == True:
+                if not self.Trucks_in_route.currentItem():
+                    self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                        level=QgsMessageBar.WARNING, duration=2)
+                    return
+                self.Message_display.clear()
+                Truck = self.Trucks_in_route.currentItem().text()
+                name = "car" + Truck + ".txt"
+                file = open(name, 'w')
+                self.Message_display.addItem("----------------------------------")
+                self.Message_display.addItem(Truck)
+                self.Message_display.addItem("Reassigned route 2")
+                self.Message_display.addItem(str(globvars.path2))
+                self.Message_display.addItem("----------------------------------")
+                file.write("----------------------------------\n")
+                file.write(Truck + "\n")
+                file.write("Reassigned route 2\n")
+                file.write(str(globvars.path2))
+                file.write("----------------------------------\n")
+            else:
+                if not self.In_station_list.currentItem():
+                    self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                        level=QgsMessageBar.WARNING, duration=2)
+                    return
+                self.Message_display.clear()
+                Truck = self.In_station_list.currentItem().text()
+                name = "car" + Truck + ".txt"
+                file = open(name, 'w')
+                self.Message_display.addItem("----------------------------------")
+                self.Trucks_in_route.addItem(Truck)
+                self.Message_display.addItem(Truck)
+                self.Message_display.addItem("Follow route 2")
+                self.Message_display.addItem(str(globvars.path2))
+                self.Message_display.addItem("----------------------------------")
+                file.write("----------------------------------\n")
+                file.write(Truck + "\n")
+                file.write("Follow route 2\n")
+                file.write(str(globvars.path2))
+                file.write("----------------------------------\n")
+                self.In_station_list.takeItem(self.In_station_list.currentRow())
+            self.zoomback()
+            globvars.clicked_canvas = False
 
     def select_route_3(self):
-        if self.Reassign.isChecked() == True:
-            if not self.Trucks_in_route.currentItem():
-                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
-                                                    level=QgsMessageBar.WARNING, duration=2)
-                return
-            self.Message_display.clear()
-            Truck = self.Trucks_in_route.currentItem().text()
-            name = "car" + Truck + ".txt"
-            file = open(name, 'w')
-            self.Message_display.addItem("----------------------------------")
-            self.Message_display.addItem(Truck)
-            self.Message_display.addItem("Reassigned route 3")
-            self.Message_display.addItem(str(globvars.path3))
-            self.Message_display.addItem("----------------------------------")
-            file.write("----------------------------------\n")
-            file.write(Truck + "\n")
-            file.write("Reassigned route 3\n")
-            file.write(str(globvars.path3))
-            file.write("----------------------------------\n")
+        if globvars.clicked_canvas == False:
+            self.iface.messageBar().pushMessage("Warning",
+                                                "Choose a destination by clicking on map first!",
+                                                level=QgsMessageBar.WARNING, duration=2)
+            return
         else:
-            if not self.In_station_list.currentItem():
-                self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
-                                                    level=QgsMessageBar.WARNING, duration=2)
-                return
-            self.Message_display.clear()
-            Truck = self.In_station_list.currentItem().text()
-            name = "car" + Truck + ".txt"
-            file = open(name, 'w')
-            self.Message_display.addItem("----------------------------------")
-            self.Trucks_in_route.addItem(Truck)
-            self.Message_display.addItem(Truck)
-            self.Message_display.addItem("Follow route 3")
-            self.Message_display.addItem(str(globvars.path3))
-            self.Message_display.addItem("----------------------------------")
-            file.write("----------------------------------\n")
-            file.write(Truck + "\n")
-            file.write("Follow route 3\n")
-            file.write(str(globvars.path3))
-            file.write("----------------------------------\n")
-            self.In_station_list.takeItem(self.In_station_list.currentRow())
-        self.zoomback()
+            if self.Reassign.isChecked() == True:
+                if not self.Trucks_in_route.currentItem():
+                    self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                        level=QgsMessageBar.WARNING, duration=2)
+                    return
+                self.Message_display.clear()
+                Truck = self.Trucks_in_route.currentItem().text()
+                name = "car" + Truck + ".txt"
+                file = open(name, 'w')
+                self.Message_display.addItem("----------------------------------")
+                self.Message_display.addItem(Truck)
+                self.Message_display.addItem("Reassigned route 3")
+                self.Message_display.addItem(str(globvars.path3))
+                self.Message_display.addItem("----------------------------------")
+                file.write("----------------------------------\n")
+                file.write(Truck + "\n")
+                file.write("Reassigned route 3\n")
+                file.write(str(globvars.path3))
+                file.write("----------------------------------\n")
+            else:
+                if not self.In_station_list.currentItem():
+                    self.iface.messageBar().pushMessage("Warning", "Please select truck first!",
+                                                        level=QgsMessageBar.WARNING, duration=2)
+                    return
+                self.Message_display.clear()
+                Truck = self.In_station_list.currentItem().text()
+                name = "car" + Truck + ".txt"
+                file = open(name, 'w')
+                self.Message_display.addItem("----------------------------------")
+                self.Trucks_in_route.addItem(Truck)
+                self.Message_display.addItem(Truck)
+                self.Message_display.addItem("Follow route 3")
+                self.Message_display.addItem(str(globvars.path3))
+                self.Message_display.addItem("----------------------------------")
+                file.write("----------------------------------\n")
+                file.write(Truck + "\n")
+                file.write("Follow route 3\n")
+                file.write(str(globvars.path3))
+                file.write("----------------------------------\n")
+                self.In_station_list.takeItem(self.In_station_list.currentRow())
+            self.zoomback()
+            globvars.clicked_canvas = False
 
     # def add_truck_instance(self):
     #     self.In_station_list.addItem(self.Truck_text.text())
@@ -700,6 +723,8 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         self.analysisTab.setDisabled(False)
         self.sampleWidgets.setCurrentIndex(1)
+        self.iface.messageBar().pushMessage("Info", "Start by drawing the calamity zone",
+                                                     level=0, duration=3)
 
     def cancelCounter(self):
         # triggered if the user clicks the cancel button
@@ -786,7 +811,7 @@ class MapTool(QgsMapTool):
         self.tied_points = []
         self.firestation_coord = (92619.8,436539)
         globvars.changes = True
-        self.init_names = False
+        self.init_graph = False
         #clean the canvas - !!! to be fixed !!!
         print 'initiated maptool'
 
@@ -855,7 +880,7 @@ class MapTool(QgsMapTool):
             self.destination = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
 
             #shortest path algorythm
-            if globvars.changes == True:
+            if globvars.changes == True or self.init_graph -- False:
                 print "changes detected, rebuilds network"
                 globvars.changes = False
                 self.buildNetwork()
@@ -877,11 +902,21 @@ class MapTool(QgsMapTool):
                 if coord[1] < y_min:
                     y_min = coord[1]
             zoomextent = QgsRectangle(float(x_min), float(y_min), float(x_max), y_max)
-            self.rezoom(zoomextent)
+            zoomcheck = self.rezoom(zoomextent)
+
+            # once the graph is initialized, keep record and activate the dispatching tab
+            if self.graph and self.tied_points and zoomcheck == True
+                if self.init_graph == False:
+                    self.iface.messageBar().pushMessage("Info",
+                                                        "Now select truck (in list) and assign route (using coloured buttons)",
+                                                        level=0, duration=3)
+                self.init_graph = True
+                globvars.clicked_canvas = True
+
 
     def buildNetwork(self):
         #the first time the network is built, the layers need to be found basing on their names
-        if self.init_names == False:
+        if self.init_graph == False:
             for layer in self.canvas.layers():
                 if layer.name() == 'roads':
                     self.network_layer_original = layer
@@ -916,14 +951,14 @@ class MapTool(QgsMapTool):
                     text = "network is built for %s points" % len(self.tied_points)
             shortestdistance = float("inf")
             #here the closest tied_point to the firestation is identified
-            if self.init_names == False:
+            if self.init_graph == False:
                 for point in self.tied_points:
                     sqrdist = (point[0]-self.firestation_coord[0])**2 + (point[1]-self.firestation_coord[1])**2
                     if sqrdist < shortestdistance:
                         shortestdistance = sqrdist
                         self.closestpoint_start = point
             self.origin_index = self.tied_points.index(self.closestpoint_start)
-            self.init_names = True
+            self.init_graph = True
         return
 
     def calculateRoute(self):
@@ -1012,6 +1047,7 @@ class MapTool(QgsMapTool):
         globvars.dispatchzoom = self.canvas.extent()
         self.canvas.zoomToFeatureExtent(zoomextent)
         self.canvas.refresh()
+        return True
 
 class TimedEvent(QtCore.QThread):
     timerFinished = QtCore.pyqtSignal(list)

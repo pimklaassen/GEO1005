@@ -4,10 +4,12 @@ def init():
 	global path1
 	global path2
 	global path3
-	path1 = ['empty']
-	path2 = ['empty']
-	path3 = ['empty']
+	path1 = None
+	path2 = None
+	path3 = None
 	global dispatchzoom
-	dispatchzoom = -1
+	dispatchzoom = None
 	global Auto
 	Auto = False
+	global clicked_canvas
+	clicked_canvas = False
