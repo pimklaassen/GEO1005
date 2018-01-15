@@ -42,7 +42,7 @@
      </size>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="dataTab">
      <attribute name="title">
@@ -535,6 +535,9 @@
          <widget class="QRadioButton" name="Reassign">
           <property name="text">
            <string>Reassign</string>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
