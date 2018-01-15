@@ -202,7 +202,7 @@
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;available&quot;" sortOrder="0">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;available&quot;" sortOrder="1">
         <columns>
           <column width="-1" hidden="0" type="field" name="sid"/>
           <column width="-1" hidden="0" type="field" name="wvk_id"/>

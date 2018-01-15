@@ -65,6 +65,10 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.bridgesLayer = None
         self.roadsLayer = None
 
+        #setup for automatic dispatching
+        self.rubberBandPath1 = QgsRubberBand(self.canvas, False)
+        self.firestation_coord = (92619.8, 436539)
+
         # setup Decisions interface
         self.Add_message.clicked.connect(self.add_message_alert)
         self.Route1.clicked.connect(self.select_route_1)
@@ -187,13 +191,96 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                 level=QgsMessageBar.WARNING, duration=2)
         else:
             if self.init_graph == False or globvars.changes == True:
-                self.BuildNetwork()
+                self.buildNetwork()
+            globvars.path1 = self.calculateRoute()
+            self.select_route_1()
+            self.iface.messageBar().pushMessage("Info",
+                                                "Truck"+str(self.In_station_list.currentItem().text())+"has been dispatched!",
+                                                level=0, duration=2)
 
     def autoOff(self):
         globvars.Auto = False
         self.Auto_ON.setDisabled(False)
         self.Auto_OFF.setDisabled(True)
         globvars.auto_destination = None
+        self.canvas.scene().removeItem(self.rubberBandPath1)
+        self.iface.messageBar().pushMessage("Info",
+                                            "Automatic dispatching is disabled!",
+                                            level=0, duration=3)
+
+        #functions taken over from the MapTool class
+    def buildNetwork(self):
+        # the first time the network is built, the layers need to be found basing on their names
+        if self.init_graph == False:
+            for layer in self.canvas.layers():
+                if layer.name() == 'roads':
+                    self.network_layer_original = layer
+            for layer in self.canvas.layers():
+                if layer.name() == 'roads copy':
+                    self.network_layer = layer
+            for layer in self.canvas.layers():
+                if layer.name() == 'graph tie points':
+                    self.sourcepoint_layer = layer
+        # each time the network is built, the open bridges need to be removed from the copy and the bridges which closed added again
+        list_to_reset = []
+        list_build = []
+        for feature in self.network_layer.getFeatures():
+            list_to_reset.append(feature.id())
+        self.network_layer.dataProvider().deleteFeatures(list_to_reset)
+        for feature in self.network_layer_original.getFeatures(
+                QgsFeatureRequest().setFilterExpression('"available" = 1')):
+            list_build.append(feature)
+        self.network_layer.dataProvider().addFeatures(list_build)
+        if self.network_layer:
+            # get the points to be used as origin and destination
+            # in this case gets the centroid of the selected features
+            self.source_points = []
+            for f in self.sourcepoint_layer.getFeatures():
+                coord = (f.attribute('X'), f.attribute('Y'))
+                self.source_points.append(QgsPoint(coord[0], coord[1]))
+            # build the graph including these points
+            if len(self.source_points) > 1:
+                self.graph, self.tied_points = uf.makeUndirectedGraph(self.network_layer, self.source_points)
+                # the tied points are the new source_points on the graph
+                if self.graph and self.tied_points:
+                    text = "network is built for %s points" % len(self.tied_points)
+            shortestdistance = float("inf")
+            # here the closest tied_point to the firestation is identified
+            if self.init_graph == False:
+                for point in self.tied_points:
+                    sqrdist = (point[0] - self.firestation_coord[0]) ** 2 + (point[1] - self.firestation_coord[
+                        1]) ** 2
+                    if sqrdist < shortestdistance:
+                        shortestdistance = sqrdist
+                        self.closestpoint_start = point
+            self.origin_index = self.tied_points.index(self.closestpoint_start)
+            self.init_graph = True
+        return
+
+        # functions taken over from the MapTool class
+    def calculateRoute(self):
+        # origin and destination must be in the set of tied_points
+        shortestdistance = float("inf")
+        for point in self.tied_points:
+            sqrdist = (point[0] - globvars.auto_destination[0]) ** 2 + (
+                                                                       point[1] - globvars.auto_destination[1]) ** 2
+            if sqrdist < shortestdistance:
+                shortestdistance = sqrdist
+                self.closestpoint_end = point
+        self.destination_index = self.tied_points.index(self.closestpoint_end)
+        options = len(self.tied_points)
+        # calculate the shortest path for the given origin and destination
+        path = uf.calculateRouteDijkstra(self.graph, self.tied_points, self.origin_index,
+                                         self.destination_index)
+        # display the route
+        if len(path) > 1:
+            ptstoadd = []
+            for point in path:
+                ptstoadd.append(QgsPoint(point[0], point[1]))
+            self.rubberBandPath1.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
+            self.rubberBandPath1.setColor(QColor(100, 175, 29))
+            self.rubberBandPath1.setWidth(3)
+        return path
 
     def cancelSelection(self):
         if not self.Trucks_in_route.currentItem():
@@ -300,8 +387,9 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 file.write(str(globvars.path1))
                 file.write("----------------------------------\n")
                 self.In_station_list.takeItem(self.In_station_list.currentRow())
-            self.zoomback()
             globvars.clicked_canvas = False
+            if globvars.Auto == False:
+                self.zoomback()
 
     def select_route_2(self):
         if globvars.clicked_canvas == False:
@@ -812,81 +900,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.analysisTab.setDisabled(True)
         self.sampleWidgets.setCurrentIndex(0)
 
-################################################################
-#Twin parts copied from class MapTool#
-################################################################
-
-    def buildNetwork(self):
-        #the first time the network is built, the layers need to be found basing on their names
-        if self.init_graph == False:
-            for layer in self.canvas.layers():
-                if layer.name() == 'roads':
-                    self.network_layer_original = layer
-            for layer in self.canvas.layers():
-                if layer.name() == 'roads copy':
-                    self.network_layer = layer
-            for layer in self.canvas.layers():
-                if layer.name() == 'graph tie points':
-                    self.sourcepoint_layer = layer
-        #each time the network is built, the open bridges need to be removed from the copy and the bridges which closed added again
-        list_to_reset = []
-        list_build = []
-        for feature in self.network_layer.getFeatures():
-            list_to_reset.append(feature.id())
-        self.network_layer.dataProvider().deleteFeatures(list_to_reset)
-        for feature in self.network_layer_original.getFeatures(
-                QgsFeatureRequest().setFilterExpression('"available" = 1')):
-            list_build.append(feature)
-        self.network_layer.dataProvider().addFeatures(list_build)
-        if self.network_layer:
-            # get the points to be used as origin and destination
-            # in this case gets the centroid of the selected features
-            self.source_points = []
-            for f in self.sourcepoint_layer.getFeatures():
-                coord = (f.attribute('X'), f.attribute('Y'))
-                self.source_points.append(QgsPoint(coord[0], coord[1]))
-            # build the graph including these points
-            if len(self.source_points) > 1:
-                self.graph, self.tied_points = uf.makeUndirectedGraph(self.network_layer, self.source_points)
-                # the tied points are the new source_points on the graph
-                if self.graph and self.tied_points:
-                    text = "network is built for %s points" % len(self.tied_points)
-            shortestdistance = float("inf")
-            #here the closest tied_point to the firestation is identified
-            if self.init_graph == False:
-                for point in self.tied_points:
-                    sqrdist = (point[0]-self.firestation_coord[0])**2 + (point[1]-self.firestation_coord[1])**2
-                    if sqrdist < shortestdistance:
-                        shortestdistance = sqrdist
-                        self.closestpoint_start = point
-            self.origin_index = self.tied_points.index(self.closestpoint_start)
-            self.init_graph = True
-        return
-
-    def calculateRoute(self):
-        # origin and destination must be in the set of tied_points
-        shortestdistance = float("inf")
-        for point in self.tied_points:
-            sqrdist = (point[0] - globvars.auto_destination[0])**2 + (point[1] - globvars.auto_destination[1])**2
-            if sqrdist<shortestdistance:
-                shortestdistance = sqrdist
-                self.closestpoint_end = point
-        self.destination_index = self.tied_points.index(self.closestpoint_end)
-        options = len(self.tied_points)
-        if path > 1:
-            # calculate the shortest path for the given origin and destination
-            path = uf.calculateRouteDijkstra(self.graph, self.tied_points, self.origin_index, self.destination_index)
-            #display the route
-            if len(path) > 1:
-                ptstoadd = []
-                for point in path:
-                    ptstoadd.append(QgsPoint(point[0], point[1]))
-                self.rubberBandPath1.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                self.rubberBandPath1.setColor(QColor(100, 175, 29))
-                self.rubberBandPath1.setWidth(3)
-        return path
-
-
 class MapTool(QgsMapTool):
     def __init__(self, canvas, iface):
         super(QgsMapTool, self).__init__(canvas)
@@ -895,9 +908,6 @@ class MapTool(QgsMapTool):
         self.cursor = QCursor(Qt.CrossCursor)
         self.rubberBandPolyline = QgsRubberBand(self.canvas, False)
         self.rubberBandPolygon = QgsRubberBand(self.canvas, True)
-        self.rubberBandPath2 = QgsRubberBand(self.canvas, False)
-        self.rubberBandPath3 = QgsRubberBand(self.canvas, False)
-        self.rubberBandPath1 = QgsRubberBand(self.canvas, False)
         #for the shortest path
         self.graph = QgsGraph()
         self.tied_points = []
@@ -940,6 +950,16 @@ class MapTool(QgsMapTool):
                 Keep track of the layer id and id of the closest feature
             Select the id of the closes feature
         """
+        #set up rubberband tools:
+        try:
+            self.canvas.scene().removeItem(self.rubberBandPath1)
+            self.canvas.scene().removeItem(self.rubberBandPath2)
+            self.canvas.scene().removeItem(self.rubberBandPath3)
+        except:
+            pass
+        self.rubberBandPath2 = QgsRubberBand(self.canvas, False)
+        self.rubberBandPath3 = QgsRubberBand(self.canvas, False)
+        self.rubberBandPath1 = QgsRubberBand(self.canvas, False)
         for layer in self.canvas.layers():
             if layer.name() == 'roads':
                 self.activelayer = layer
@@ -974,7 +994,7 @@ class MapTool(QgsMapTool):
                         self.rubberBandPolygon.setBorderColor(QColor(200,50,50))
                         self.rubberBandPolygon.setWidth(10)
 
-            if Polygon == False:
+            if Polygon == False and globvars.Auto == False:
                 # Determine the location of the click in real-world coords
                 self.destination = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
 
