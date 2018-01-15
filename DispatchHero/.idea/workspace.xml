@@ -17,8 +17,8 @@
       <file leaf-file-name="DispatchHero_dockwidget.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DispatchHero_dockwidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="636">
-              <caret line="926" column="47" lean-forward="false" selection-start-line="926" selection-start-column="47" selection-end-line="926" selection-end-column="47" />
+            <state relative-caret-position="1113">
+              <caret line="873" column="0" lean-forward="true" selection-start-line="873" selection-start-column="0" selection-end-line="873" selection-end-column="39" />
               <folding>
                 <element signature="e#1154#1184#0" expanded="true" />
               </folding>
@@ -29,9 +29,11 @@
       <file leaf-file-name="DispatchHero.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DispatchHero.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
-              <caret line="185" column="0" lean-forward="true" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="397">
+              <caret line="237" column="67" lean-forward="false" selection-start-line="237" selection-start-column="62" selection-end-line="237" selection-end-column="67" />
+              <folding>
+                <element signature="e#1144#1223#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -39,8 +41,8 @@
       <file leaf-file-name="globvars.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/globvars.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="294">
-              <caret line="14" column="26" lean-forward="false" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
+            <state relative-caret-position="42">
+              <caret line="2" column="12" lean-forward="false" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -60,36 +62,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>undire</find>
-      <find>resources</find>
-      <find>qgsmapTool</find>
-      <find>maptoo</find>
-      <find>iface</find>
-      <find>dispa</find>
-      <find>maptool</find>
-      <find>path1</find>
-      <find>draw</find>
-      <find>select_route</find>
-      <find>globvars.</find>
-      <find>globva</find>
-      <find>isch</find>
-      <find>checkabl</find>
-      <find>buildnet</find>
-      <find>add_truck</find>
-      <find>delete_truck</find>
-      <find>autodis</find>
-      <find>autoon</find>
-      <find>autoOn</find>
       <find>startcounter</find>
       <find>cancelcounter</find>
       <find>conclu</find>
       <find>in_station</find>
       <find>rezoom</find>
       <find>dra</find>
-      <find>init_names</find>
       <find>self.iface</find>
       <find>self.iface.message</find>
       <find>clicked_</find>
+      <find>colour</find>
+      <find>do</find>
+      <find>dock</find>
+      <find>dockwidget</find>
+      <find>Dispatchhero</find>
+      <find>Stop</find>
+      <find>cancelselect</find>
+      <find>canvasre</find>
+      <find>autoOn</find>
+      <find>automatic</find>
+      <find>build</find>
+      <find>buildnetwork</find>
+      <find>buildn</find>
+      <find>globvar</find>
+      <find>self.closes</find>
+      <find>res1</find>
+      <find>init_names</find>
+      <find>init_graph</find>
+      <find>globvars</find>
+      <find>globvars.change</find>
+      <find>buildnetwor</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -209,7 +211,7 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19895834" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.054945055" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
@@ -370,7 +372,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="259">
           <caret line="177" column="55" lean-forward="true" selection-start-line="177" selection-start-column="55" selection-end-line="177" selection-end-column="65" />
-          <folding />
+          <folding>
+            <element signature="e#1144#1223#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -485,22 +489,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/globvars_copy.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
-          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="12" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DispatchHero.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="185" column="0" lean-forward="true" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/DispatchHero_dockwidget_copy for final.py" />
     <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/DispatchHero_dockwidget_copy.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -510,18 +498,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/DispatchHero.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="397">
+          <caret line="237" column="67" lean-forward="false" selection-start-line="237" selection-start-column="62" selection-end-line="237" selection-end-column="67" />
+          <folding>
+            <element signature="e#1144#1223#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/Master TU Delft/Year 1/2nd Quarter/GEO1005/globvars_copy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="63">
+          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="12" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/globvars.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="294">
-          <caret line="14" column="26" lean-forward="false" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
+        <state relative-caret-position="42">
+          <caret line="2" column="12" lean-forward="false" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/DispatchHero_dockwidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="636">
-          <caret line="926" column="47" lean-forward="false" selection-start-line="926" selection-start-column="47" selection-end-line="926" selection-end-column="47" />
+        <state relative-caret-position="1113">
+          <caret line="873" column="0" lean-forward="true" selection-start-line="873" selection-start-column="0" selection-end-line="873" selection-end-column="39" />
           <folding>
             <element signature="e#1154#1184#0" expanded="true" />
           </folding>

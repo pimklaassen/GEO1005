@@ -13,3 +13,5 @@ def init():
 	Auto = False
 	global clicked_canvas
 	clicked_canvas = False
+	global auto_destination
+	auto_destination = None

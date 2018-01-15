@@ -87,6 +87,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.spinBox.setMaximum(20)
         self.spinBox.setMinimum(0)
         self.spinBox.setValue(5)
+        self.In_station_list.itemDoubleClicked.connect(self.Automatic_dispatching)
 
         self.startCounterButton.setDisabled(True)
         self.stopCounterButton.setDisabled(True)
@@ -169,45 +170,60 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.Message_display.addItem("----------------------------------")
 
     def autoOn(self):
-        self.Message_display.clear()
-        self.Message_display.addItem("----------------------------------")
-        self.Message_display.addItem("AutoDispatch ON")
-        self.Message_display.addItem("----------------------------------")
+        self.iface.messageBar().pushMessage("Info",
+                                            "Automatic dispatching by shortest route is on - click on map to select destination",
+                                            level=0, duration=3)
         globvars.Auto = True
         self.Auto_ON.setDisabled(True)
         self.Auto_OFF.setDisabled(False)
+        self.init_graph = False
+
+    def Automatic_dispatching(self):
+        if globvars.Auto == False:
+            return
+        elif globvars.auto_destination == None:
+            self.iface.messageBar().pushMessage("Warning",
+                                                "First select a destination by clicking on the map!",
+                                                level=QgsMessageBar.WARNING, duration=2)
+        else:
+            if self.init_graph == False or globvars.changes == True:
+                self.BuildNetwork()
+            self.
+
 
     def autoOff(self):
-        self.Message_display.clear()
-        self.Message_display.addItem("----------------------------------")
-        self.Message_display.addItem("AutoDispatch OFF")
-        self.Message_display.addItem("----------------------------------")
         globvars.Auto = False
         self.Auto_ON.setDisabled(False)
         self.Auto_OFF.setDisabled(True)
+        globvars.auto_destination = None
 
     def cancelSelection(self):
-        self.Message_display.clear()
-        car = self.Trucks_in_route.currentItem().text()
-        name = "car" + car + ".txt"
-        file = open(name, 'r')
-        with file:
-            for line in file:
-                self.Message_display.addItem(line)
+        if not self.Trucks_in_route.currentItem():
+            self.iface.messageBar().pushMessage("Warning",
+                                                "No truck selected or no trucks in the list!",
+                                                level=QgsMessageBar.WARNING, duration=2)
+        else:
+            self.Message_display.clear()
+            car = self.Trucks_in_route.currentItem().text()
+            name = "car" + car + ".txt"
+            file = open(name, 'r')
+            with file:
+                for line in file:
+                    self.Message_display.addItem(line)
 
-        file = open(name, 'a')
-        self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
-        Truck = self.Trucks_in_route.currentItem().text()
-        self.Message_display.addItem(Truck)
-        file.write(Truck + "\n")
-        self.Message_display.addItem("Cancel route\n")
-        file.write("Cancel route\n")
-        self.Message_display.addItem("----------------------------------")
-        file.write("----------------------------------\n")
-        self.In_station_list.addItem(Truck)
-        self.Trucks_in_route.takeItem(self.Trucks_in_route.currentRow())
-        pass
+            file = open(name, 'a')
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            Truck = self.Trucks_in_route.currentItem().text()
+            self.Message_display.addItem(Truck)
+            file.write(Truck + "\n")
+            self.Message_display.addItem("Cancel route\n")
+            file.write("Cancel route\n")
+            self.Message_display.addItem("----------------------------------")
+            file.write("----------------------------------\n")
+            self.In_station_list.addItem(Truck)
+            self.Trucks_in_route.takeItem(self.Trucks_in_route.currentRow())
+            pass
 
     def addlist_routes(self):
         self.Routes.addItem(self.Route_name.text())
@@ -240,7 +256,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         pass
 
     def select_route_1(self):
-        if globvars.clicked_canvas == False:
+        if globvars.clicked_canvas == False and globvars.Auto == False:
             self.iface.messageBar().pushMessage("Warning",
                                                 "Choose a destination by clicking on map first!",
                                                 level=QgsMessageBar.WARNING, duration=2)
@@ -590,7 +606,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # add pending bridge to pendingList, set change to True!
         if not obj['brige'] in self.pendingList:
             self.pendingList.append(obj['brige'])
-            globvars.change = True
+            globvars.changes = True
 
         log = '{} will open for {}'.format(pending_bridge, obj['name'])
         self.vesselsList.addItem(log)
@@ -684,7 +700,7 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
             if name == 'GRT02_9de96a85-078b-4954-82ad-3bec2e22a75b':
                 try:
                     self.pendingList.remove('koninginne')
-                    globvars.change = True
+                    globvars.changes = True
                 except:
                     pass
 
@@ -795,6 +811,81 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.analysisTab.setDisabled(True)
         self.sampleWidgets.setCurrentIndex(0)
 
+################################################################
+#Twin parts copied from class MapTool#
+################################################################
+
+    def buildNetwork(self):
+        #the first time the network is built, the layers need to be found basing on their names
+        if self.init_graph == False:
+            for layer in self.canvas.layers():
+                if layer.name() == 'roads':
+                    self.network_layer_original = layer
+            for layer in self.canvas.layers():
+                if layer.name() == 'roads copy':
+                    self.network_layer = layer
+            for layer in self.canvas.layers():
+                if layer.name() == 'graph tie points':
+                    self.sourcepoint_layer = layer
+        #each time the network is built, the open bridges need to be removed from the copy and the bridges which closed added again
+        list_to_reset = []
+        list_build = []
+        for feature in self.network_layer.getFeatures():
+            list_to_reset.append(feature.id())
+        self.network_layer.dataProvider().deleteFeatures(list_to_reset)
+        for feature in self.network_layer_original.getFeatures(
+                QgsFeatureRequest().setFilterExpression('"available" = 1')):
+            list_build.append(feature)
+        self.network_layer.dataProvider().addFeatures(list_build)
+        if self.network_layer:
+            # get the points to be used as origin and destination
+            # in this case gets the centroid of the selected features
+            self.source_points = []
+            for f in self.sourcepoint_layer.getFeatures():
+                coord = (f.attribute('X'), f.attribute('Y'))
+                self.source_points.append(QgsPoint(coord[0], coord[1]))
+            # build the graph including these points
+            if len(self.source_points) > 1:
+                self.graph, self.tied_points = uf.makeUndirectedGraph(self.network_layer, self.source_points)
+                # the tied points are the new source_points on the graph
+                if self.graph and self.tied_points:
+                    text = "network is built for %s points" % len(self.tied_points)
+            shortestdistance = float("inf")
+            #here the closest tied_point to the firestation is identified
+            if self.init_graph == False:
+                for point in self.tied_points:
+                    sqrdist = (point[0]-self.firestation_coord[0])**2 + (point[1]-self.firestation_coord[1])**2
+                    if sqrdist < shortestdistance:
+                        shortestdistance = sqrdist
+                        self.closestpoint_start = point
+            self.origin_index = self.tied_points.index(self.closestpoint_start)
+            self.init_graph = True
+        return
+
+    def calculateRoute(self):
+        # origin and destination must be in the set of tied_points
+        shortestdistance = float("inf")
+        for point in self.tied_points:
+            sqrdist = (point[0] - globvars.auto_destination[0])**2 + (point[1] - globvars.auto_destination[1])**2
+            if sqrdist<shortestdistance:
+                shortestdistance = sqrdist
+                self.closestpoint_end = point
+        self.destination_index = self.tied_points.index(self.closestpoint_end)
+        options = len(self.tied_points)
+        if path > 1:
+            # calculate the shortest path for the given origin and destination
+            path = uf.calculateRouteDijkstra(self.graph, self.tied_points, self.origin_index, self.destination_index)
+            #display the route
+            if len(path) > 1:
+                ptstoadd = []
+                for point in path:
+                    ptstoadd.append(QgsPoint(point[0], point[1]))
+                self.rubberBandPath1.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
+                self.rubberBandPath1.setColor(QColor(100, 175, 29))
+                self.rubberBandPath1.setWidth(3)
+        return path
+
+
 class MapTool(QgsMapTool):
     def __init__(self, canvas, iface):
         super(QgsMapTool, self).__init__(canvas)
@@ -848,71 +939,77 @@ class MapTool(QgsMapTool):
                 Keep track of the layer id and id of the closest feature
             Select the id of the closes feature
         """
-        print 'detected release'
         for layer in self.canvas.layers():
             if layer.name() == 'roads':
                 self.activelayer = layer
-        if Polygon == True:
-                LayerPoint = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
-                polygonlist.append(LayerPoint)
-                if len(polygonlist)==1:
-                    pass
-                if len(polygonlist)==2:
-                    points = polygonlist
-                    ptstoadd = []
-                    for point in points:
-                        ptstoadd.append(QgsPoint(point[0], point[1]))
-                    self.rubberBandPolyline.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
-                    self.rubberBandPolyline.setColor(QColor(200, 50, 50))
-                    self.rubberBandPolyline.setWidth(10)
-                if len(polygonlist)>2:
-                    self.canvas.scene().removeItem(self.rubberBandPolyline)
-                    points = polygonlist
-                    ptstoadd = []
-                    for point in points:
-                        ptstoadd.append(QgsPoint(point[0], point[1]))
-                    self.rubberBandPolygon.setToGeometry(QgsGeometry.fromPolygon([ptstoadd]), None)
-                    self.rubberBandPolygon.setBorderColor(QColor(200,50,50))
-                    self.rubberBandPolygon.setWidth(10)
+        # in case the auto dispatch mode is on
+        if globvars.Auto == True:
+            globvars.auto_destination = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
+            self.iface.messageBar().pushMessage("Info",
+                                                "Trucks can be dispatched by double-clicking them in the list",
+                                                level=0, duration=3)
+        # in case the auto dispatch mode is off
+        else:
+            if Polygon == True:
+                    LayerPoint = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
+                    polygonlist.append(LayerPoint)
+                    if len(polygonlist)==1:
+                        pass
+                    if len(polygonlist)==2:
+                        points = polygonlist
+                        ptstoadd = []
+                        for point in points:
+                            ptstoadd.append(QgsPoint(point[0], point[1]))
+                        self.rubberBandPolyline.setToGeometry(QgsGeometry.fromPolyline(ptstoadd), None)
+                        self.rubberBandPolyline.setColor(QColor(200, 50, 50))
+                        self.rubberBandPolyline.setWidth(10)
+                    if len(polygonlist)>2:
+                        self.canvas.scene().removeItem(self.rubberBandPolyline)
+                        points = polygonlist
+                        ptstoadd = []
+                        for point in points:
+                            ptstoadd.append(QgsPoint(point[0], point[1]))
+                        self.rubberBandPolygon.setToGeometry(QgsGeometry.fromPolygon([ptstoadd]), None)
+                        self.rubberBandPolygon.setBorderColor(QColor(200,50,50))
+                        self.rubberBandPolygon.setWidth(10)
 
-        if Polygon == False:
-            # Determine the location of the click in real-world coords
-            self.destination = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
+            if Polygon == False:
+                # Determine the location of the click in real-world coords
+                self.destination = self.toLayerCoordinates(self.activelayer, mouseEvent.pos())
 
-            #shortest path algorythm
-            if globvars.changes == True or self.init_graph -- False:
-                print "changes detected, rebuilds network"
-                globvars.changes = False
-                self.buildNetwork()
-            if self.graph and self.tied_points:
-                globvars.path1, globvars.path2, globvars.path3 = self.calculateRoute()
-            #change the zoom setting
-            all_paths = globvars.path1 + globvars.path2 + globvars.path3
-            x_max = float("-inf")
-            x_min = float("inf")
-            y_max = float("-inf")
-            y_min = float("inf")
-            for coord in all_paths:
-                if coord[0] > x_max:
-                    x_max = coord[0]
-                if coord[0] < x_min:
-                    x_min = coord[0]
-                if coord[1] > y_max:
-                    y_max = coord[1]
-                if coord[1] < y_min:
-                    y_min = coord[1]
-            zoomextent = QgsRectangle(float(x_min), float(y_min), float(x_max), y_max)
-            zoomcheck = self.rezoom(zoomextent)
+                #shortest path algorythm
+                if globvars.changes == True or self.init_graph == False:
+                    print "changes detected, rebuilds network"
+                    globvars.changes = False
+                    self.buildNetwork()
+                if self.graph and self.tied_points:
+                    globvars.path1, globvars.path2, globvars.path3 = self.calculateRoute()
+                #change the zoom setting
+                all_paths = globvars.path1 + globvars.path2 + globvars.path3
+                x_max = float("-inf")
+                x_min = float("inf")
+                y_max = float("-inf")
+                y_min = float("inf")
+                for coord in all_paths:
+                    if coord[0] > x_max:
+                        x_max = coord[0]
+                    if coord[0] < x_min:
+                        x_min = coord[0]
+                    if coord[1] > y_max:
+                        y_max = coord[1]
+                    if coord[1] < y_min:
+                        y_min = coord[1]
+                zoomextent = QgsRectangle(float(x_min), float(y_min), float(x_max), y_max)
+                zoomcheck = self.rezoom(zoomextent)
 
-            # once the graph is initialized, keep record and activate the dispatching tab
-            if self.graph and self.tied_points and zoomcheck == True:
-                if self.init_graph == False:
-                    self.iface.messageBar().pushMessage("Info",
-                                                        "Now select truck (in list) and assign route (using coloured buttons)",
-                                                        level=0, duration=3)
-                self.init_graph = True
-                globvars.clicked_canvas = True
-
+                # once the graph is initialized, keep record and activate the dispatching tab
+                if self.graph and self.tied_points and zoomcheck == True:
+                    if self.init_graph == False:
+                        self.iface.messageBar().pushMessage("Info",
+                                                            "Now select truck (in list) and assign route (using coloured buttons)",
+                                                            level=0, duration=3)
+                    self.init_graph = True
+                    globvars.clicked_canvas = True
 
     def buildNetwork(self):
         #the first time the network is built, the layers need to be found basing on their names
@@ -931,11 +1028,11 @@ class MapTool(QgsMapTool):
         list_build = []
         for feature in self.network_layer.getFeatures():
             list_to_reset.append(feature.id())
-        res1 = self.network_layer.dataProvider().deleteFeatures(list_to_reset)
+        self.network_layer.dataProvider().deleteFeatures(list_to_reset)
         for feature in self.network_layer_original.getFeatures(
                 QgsFeatureRequest().setFilterExpression('"available" = 1')):
             list_build.append(feature)
-        res2, added_points = self.network_layer.dataProvider().addFeatures(list_build)
+        self.network_layer.dataProvider().addFeatures(list_build)
         if self.network_layer:
             # get the points to be used as origin and destination
             # in this case gets the centroid of the selected features
@@ -1002,24 +1099,16 @@ class MapTool(QgsMapTool):
                 self.via_points = [(new_point1_x,new_point1_y), (new_point2_x, new_point2_y)]
                 #determine the alternative roude node_points which have a crossing
                 self.via_tied_points_index = []
-                for via in self.via_points:
-                    shortestdistance = float("inf")
-                    for crosspoint in self.sourcepoint_layer.getFeatures():
-                        if crosspoint.attribute('crossing') == 1:
-                            sqrdist = (via[0]-crosspoint.attribute('X'))**2 + (via[1]-crosspoint.attribute('Y'))**2
-                            if sqrdist < shortestdistance:
-                                shortestdistance = sqrdist
-                                via_point_coord = (crosspoint.attribute('X'), crosspoint.attribute('Y'))
-                    if via_point_coord:
-                        lowestdiff = float("inf")
-                        for point in self.tied_points:
-                            diff = (round(via_point_coord[0],1) - round(point[0],1))**2 + (round(via_point_coord[1],1) - round(point[1],1))**2
-                            if diff < lowestdiff:
-                                lowestdiff = diff
-                                lowestdiff_point = point
-                        if lowestdiff_point:
-                            via_point_index = self.tied_points.index(lowestdiff_point)
-                            self.via_tied_points_index.append(via_point_index)
+                for via_point_coord in self.via_points:
+                    lowestdiff = float("inf")
+                    for point in self.tied_points:
+                        diff = (round(via_point_coord[0],1) - round(point[0],1))**2 + (round(via_point_coord[1],1) - round(point[1],1))**2
+                        if diff < lowestdiff:
+                            lowestdiff = diff
+                            lowestdiff_point = point
+                    if lowestdiff_point:
+                        via_point_index = self.tied_points.index(lowestdiff_point)
+                        self.via_tied_points_index.append(via_point_index)
                 #calculate the alternative routes
                 display_indicator = 2
                 alt_path = dict()
