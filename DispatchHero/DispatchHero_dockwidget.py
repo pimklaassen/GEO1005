@@ -870,7 +870,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.analysisTab.setDisabled(True)
         self.sampleWidgets.setCurrentIndex(0)
 
-<<<<<<< HEAD
         msg = 'Please select a location for the log file.'
         reply = QtGui.QMessageBox.question(self, 'Message', 
                      msg, QtGui.QMessageBox.Yes)
@@ -959,9 +958,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 self.rubberBandPath1.setWidth(3)
         return path
 
-
-=======
->>>>>>> 91c5b2a9db6313cfb7dae82b39500e79e5cdda3f
 class MapTool(QgsMapTool):
     def __init__(self, canvas, iface):
         super(QgsMapTool, self).__init__(canvas)
