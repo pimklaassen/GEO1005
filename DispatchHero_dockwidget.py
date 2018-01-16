@@ -319,7 +319,6 @@ class DispatchHeroDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.Message_display.addItem("----------------------------------")
         self.Route_message.setText('')
         self.Route_message.setFocus()
-        file.close()
         
         self.logMessage('{}: {}'.format(Truck, self.Route_message.text()))
 
