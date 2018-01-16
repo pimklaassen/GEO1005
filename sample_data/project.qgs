@@ -5,16 +5,16 @@
   <evaluateDefaultValues active="0"/>
   <layer-tree-group expanded="1" checked="Qt::Checked" name="">
     <customproperties/>
-    <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="roads_copy20180113103239942" source="C:/Users/Pablo/Documents/GitHub/GEO1005_GROUP-7/sample_data/roads copy.shp" name="roads copy">
+    <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="roads_copy20180113103239942" source="C:/Users/Pablo/Desktop/DispatchHero/sample_data/roads copy.shp" name="roads copy">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="Rotterdam_roads20180111172703499" source="C:/Users/Pablo/Documents/GitHub/GEO1005_GROUP-7/sample_data/roads.shp" name="roads">
+    <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="Rotterdam_roads20180111172703499" source="C:/Users/Pablo/Desktop/DispatchHero/sample_data/roads.shp" name="roads">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="bridges20180111171612604" source="C:/Users/Pablo/Documents/GitHub/GEO1005_GROUP-7/sample_data/bridges.shp" name="bridges">
+    <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="bridges20180111171612604" source="C:/Users/Pablo/Desktop/DispatchHero/sample_data/bridges.shp" name="bridges">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="graph_tie_points20180110195011127" source="C:/Users/Pablo/Documents/GitHub/GEO1005_GROUP-7/sample_data/graph_tie_points.shp" name="graph tie points">
+    <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="graph_tie_points20180110195011127" source="C:/Users/Pablo/Desktop/DispatchHero/sample_data/graph_tie_points.shp" name="graph tie points">
       <customproperties/>
     </layer-tree-layer>
     <layer-tree-layer expanded="1" providerKey="wms" checked="Qt::Checked" id="brtachtergrondkaartgrijs20180102191316886" source="tileMatrixSet=EPSG:28992&amp;crs=EPSG:28992&amp;layers=brtachtergrondkaartgrijs&amp;styles=default&amp;format=image/png&amp;url=https://geodata.nationaalgeoregister.nl/wmts?VERSION%3D1.0.0%26request%3DGetCapabilities" name="brtachtergrondkaartgrijs">
@@ -25,10 +25,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>90467.88198091613594443</xmin>
-      <ymin>432699.04051262943539768</ymin>
-      <xmax>98545.13207505014725029</xmax>
-      <ymax>437510.03819000709336251</ymax>
+      <xmin>90482.11920199863379821</xmin>
+      <ymin>434371.61822769610444084</ymin>
+      <xmax>94520.74424906563945115</xmax>
+      <ymax>436777.11706638493342325</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -875,7 +875,7 @@ def my_form_open(dialog, layer, feature):
       </customproperties>
       <blendMode>0</blendMode>
       <featureBlendMode>0</featureBlendMode>
-      <layerTransparency>0</layerTransparency>
+      <layerTransparency>100</layerTransparency>
       <displayfield>wegnr_aw</displayfield>
       <label>0</label>
       <labelattributes>
