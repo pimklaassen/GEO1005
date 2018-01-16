@@ -912,7 +912,7 @@ class MapTool(QgsMapTool):
         ptstoadd.append(QgsPoint(self.firestation_coord[0] + 10, self.firestation_coord[1] + 10))
         ptstoadd.append(QgsPoint(self.firestation_coord[0] - 10, self.firestation_coord[1] + 10))
         self.rubberBandFirestation.setToGeometry(QgsGeometry.fromPolygon([ptstoadd]), None)
-        self.rubberBandFirestation.setBorderColor(QColor(200, 50, 50))
+        self.rubberBandFirestation.setBorderColor(QColor(255, 127, 0))
         self.rubberBandFirestation.setWidth(10)
 
 
